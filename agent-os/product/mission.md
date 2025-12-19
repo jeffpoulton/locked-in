@@ -2,7 +2,9 @@
 
 ## Pitch
 
-**Locked In** is an AI-driven accountability coaching app that helps motivated individuals build lasting habits by leveraging behavioral psychology through a Variable Interval Deposit Contract mechanism. Users deposit their own money and earn it back by completing daily actions - but they never know which days have rewards or how much each reward is worth, creating powerful loss-avoidance motivation that drives consistent action.
+**Locked In** is the only accountability coach that refunds you based on your success. Unlike coaches or apps that charge monthly fees regardless of results, Locked In flips the model: deposit your own money upfront, complete your daily habit, and earn it all back. Miss a day that had a reward? That money is forfeited - creating real stakes that drive real action.
+
+Here's the twist: you never know which days have rewards or how much they're worth. It's the same psychology that makes games hard to put down - that "maybe today's the day" feeling - except it's pushing you toward the gym instead of pulling you toward your phone.
 
 ## Users
 
@@ -140,6 +142,27 @@ Unlike apps that only support self-reporting (easy to cheat) or require specific
 
 Our primary goal is habit formation, not deposit forfeiture. The system is designed so that engaged users recover most or all of their money. Forfeitures happen, but they're a consequence of the mechanism working - not our business model.
 
+### Where Forfeited Money Goes
+
+When a user misses a day that contained a reward, that amount becomes non-refundable and goes to Locked In. This is our primary revenue model. We don't donate it to charity (which would dilute the personal stakes) and we don't refund it (which would undermine the entire mechanism). The forfeiture is real - that's what makes the motivation real.
+
+This aligns incentives honestly: we make money when users fail to follow through on their own commitments. We're transparent about this, and we mitigate the tension by designing for user success - variable reward schedules, AI coaching, multiple verification methods - all aimed at maximizing completion rates. A user who recovers 100% of their deposit is a user who built a habit, and that's the outcome we're optimizing for.
+
+### Early Exit Policy
+
+Life happens. If a user needs to exit a contract before completion, we offer a fair but clear-eyed exit:
+
+- **First 48 hours:** Full refund, no questions asked. Sometimes people realize immediately that they overcommitted or the timing is wrong.
+- **After 48 hours:** Refund of 50% of remaining unrevealed rewards. The other 50% is forfeited as an "exit fee."
+
+The 50% structure accomplishes several things:
+1. **Not predatory:** Users get meaningful money back, not held hostage
+2. **Not a free pass:** There's a real cost to backing out that reinforces the commitment they made
+3. **Honest framing:** We're not pretending this is a subscription they can cancel - they made a bet on themselves and are choosing not to see it through
+4. **Encourages completion:** The math almost always favors finishing the contract if you're even moderately successful
+
+Users who exit receive a message acknowledging their decision without judgment: "You committed money to becoming a better version of yourself. That took courage. This time didn't work out, but the commitment itself matters. We hope to see you back when the timing is right."
+
 ### Responsible Deposit Limits
 
 - Minimum deposit: $10 (meaningful but not harmful)
@@ -153,3 +176,4 @@ Users understand exactly how the system works before depositing:
 - Clear explanation of variable reward distribution
 - Historical data on average recovery rates
 - No hidden fees or surprise deductions
+- Clear explanation of early exit terms before commitment

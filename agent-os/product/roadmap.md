@@ -30,27 +30,29 @@ The foundation: users can deposit money, complete daily habits, and recover thei
 
 10. [ ] Contract Completion Flow — Handle end-of-contract logic: calculate final recovery amount, process any remaining payouts, display summary, and prompt for contract renewal. `S`
 
+11. [ ] Early Exit Flow — Implement the ability to exit a contract early with appropriate refund logic: full refund within 48 hours, 50% of remaining unrevealed rewards after. Include clear confirmation UI explaining forfeiture amount and a graceful exit message. `S`
+
 ---
 
 ## Phase 2: Enhanced - AI Coaching & Advanced Verification
 
 Add intelligence and flexibility to drive higher completion rates.
 
-11. [ ] AI Coaching Engine — Integrate Claude API to provide personalized coaching messages based on user's habit type, progress patterns, and current streak status. Include motivational check-ins and obstacle troubleshooting. `L`
+12. [ ] AI Coaching Engine — Integrate Claude API to provide personalized coaching messages based on user's habit type, progress patterns, and current streak status. Include motivational check-ins and obstacle troubleshooting. `L`
 
-12. [ ] Adaptive Messaging System — Build a system that adjusts AI coaching tone, timing, and frequency based on user engagement patterns and preferences. Learn what works for each user. `M`
+13. [ ] Adaptive Messaging System — Build a system that adjusts AI coaching tone, timing, and frequency based on user engagement patterns and preferences. Learn what works for each user. `M`
 
-13. [ ] Photo Verification — Add camera capture and photo upload for visual habit proof (e.g., gym selfie, healthy meal, completed work). Store securely in Supabase Storage. `M`
+14. [ ] Photo Verification — Add camera capture and photo upload for visual habit proof (e.g., gym selfie, healthy meal, completed work). Store securely in Supabase Storage. `M`
 
-14. [ ] Fitness Tracker Integration — Connect with Apple Health, Google Fit, and Fitbit APIs to automatically verify exercise-related habits based on activity data. `L`
+15. [ ] Fitness Tracker Integration — Connect with Apple Health, Google Fit, and Fitbit APIs to automatically verify exercise-related habits based on activity data. `L`
 
-15. [ ] Progress Analytics Dashboard — Create detailed analytics showing completion rates over time, best/worst days of the week, streak history, and comparison across contracts. `M`
+16. [ ] Progress Analytics Dashboard — Create detailed analytics showing completion rates over time, best/worst days of the week, streak history, and comparison across contracts. `M`
 
-16. [ ] Pattern Insights Engine — Analyze user data to surface actionable insights: "You're 40% more likely to complete your habit before 9am" or "Mondays are your weakest day." `M`
+17. [ ] Pattern Insights Engine — Analyze user data to surface actionable insights: "You're 40% more likely to complete your habit before 9am" or "Mondays are your weakest day." `M`
 
-17. [ ] Multiple Simultaneous Contracts — Enable users to run several habit contracts at once with a unified dashboard view and combined daily check-in experience. `M`
+18. [ ] Multiple Simultaneous Contracts — Enable users to run several habit contracts at once with a unified dashboard view and combined daily check-in experience. `M`
 
-18. [ ] Contract Templates — Offer pre-configured contract templates for common habits (daily exercise, meditation, coding, reading) with suggested durations and deposit ranges. `S`
+19. [ ] Contract Templates — Offer pre-configured contract templates for common habits (daily exercise, meditation, coding, reading) with suggested durations and deposit ranges. `S`
 
 ---
 
@@ -58,25 +60,25 @@ Add intelligence and flexibility to drive higher completion rates.
 
 Build community and expand the platform's reach.
 
-19. [ ] Accountability Partners — Allow users to invite friends to view their contract progress in real-time, with optional notifications when they complete (or miss) a day. `M`
+20. [ ] Accountability Partners — Allow users to invite friends to view their contract progress in real-time, with optional notifications when they complete (or miss) a day. `M`
 
-20. [ ] Public Commitments — Enable users to share their active contracts publicly with a unique URL, creating social accountability through visibility. `S`
+21. [ ] Public Commitments — Enable users to share their active contracts publicly with a unique URL, creating social accountability through visibility. `S`
 
-21. [ ] Community Feed — Build a feed where users can optionally share completions, milestones, and contract completions with the broader Locked In community. `L`
+22. [ ] Community Feed — Build a feed where users can optionally share completions, milestones, and contract completions with the broader Locked In community. `L`
 
-22. [ ] Coding Platform Integration — Connect with GitHub API to automatically verify coding habits based on commits, PRs, or contribution activity. `M`
+23. [ ] Coding Platform Integration — Connect with GitHub API to automatically verify coding habits based on commits, PRs, or contribution activity. `M`
 
-23. [ ] Meditation App Integration — Integrate with Headspace, Calm, or Insight Timer APIs to verify meditation habit completion. `M`
+24. [ ] Meditation App Integration — Integrate with Headspace, Calm, or Insight Timer APIs to verify meditation habit completion. `M`
 
-24. [ ] AI-Assisted Verification — Use vision AI to validate photo proofs and natural language processing to verify subjective habit completions with appropriate confidence scoring. `L`
+25. [ ] AI-Assisted Verification — Use vision AI to validate photo proofs and natural language processing to verify subjective habit completions with appropriate confidence scoring. `L`
 
-25. [ ] Achievement System — Create meaningful achievements and milestones (first contract completed, 30-day streak, $500 recovered) that celebrate user success without undermining the core mechanism. `S`
+26. [ ] Achievement System — Create meaningful achievements and milestones (first contract completed, 30-day streak, $500 recovered) that celebrate user success without undermining the core mechanism. `S`
 
-26. [ ] Referral Program — Implement a referral system where users can invite friends and both receive benefits (e.g., reduced platform fees or bonus recovery percentage). `M`
+27. [ ] Referral Program — Implement a referral system where users can invite friends and both receive benefits (e.g., reduced platform fees or bonus recovery percentage). `M`
 
-27. [ ] Advanced Notification Intelligence — Use ML to optimize notification timing and content based on when users are most likely to engage and complete their habits. `L`
+28. [ ] Advanced Notification Intelligence — Use ML to optimize notification timing and content based on when users are most likely to engage and complete their habits. `L`
 
-28. [ ] Contract Groups — Enable groups of users to start synchronized contracts together, creating shared accountability and friendly competition. `L`
+29. [ ] Contract Groups — Enable groups of users to start synchronized contracts together, creating shared accountability and friendly competition. `L`
 
 ---
 
