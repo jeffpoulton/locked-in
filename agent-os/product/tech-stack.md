@@ -38,7 +38,8 @@ locked-in/
 | Language | TypeScript | 5.x |
 | Runtime | Node.js | 20+ |
 | Package Manager | pnpm | Latest |
-| CSS Framework | Tailwind CSS | 3.4+ |
+| Design System + Components | Shadcn |
+| CSS Framework | Tailwind CSS | 4.0+ |
 | State Management | Zustand | 4.4+ |
 | Data Fetching | TanStack Query | 5.x |
 | Routing | Next.js file-based routing | - |

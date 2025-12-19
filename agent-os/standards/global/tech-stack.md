@@ -13,9 +13,9 @@ This stack is optimized for a solo founder building web + mobile apps with AI as
 ---
 
 ### Web Application
-- **Framework:** Next.js 14+ (App Router)
+- **Framework:** Next.js 15+ (App Router)
 - **Language:** TypeScript
-- **Runtime:** Node.js 20+
+- **Runtime:** Node.js 22+
 - **Package Manager:** pnpm (or npm)
 - **CSS Framework:** Tailwind CSS
 - **State Management:** Zustand or React Context API
@@ -23,7 +23,7 @@ This stack is optimized for a solo founder building web + mobile apps with AI as
 - **Routing:** Next.js file-based routing (App Router)
 
 ### Mobile Application
-- **Framework:** React Native with Expo
+- **Framework:** React Native with Expo SDK 54+
 - **Language:** TypeScript
 - **Router:** Expo Router (file-based, similar to Next.js)
 - **Styling:** NativeWind (Tailwind for React Native)
@@ -40,7 +40,7 @@ This stack is optimized for a solo founder building web + mobile apps with AI as
 
 ### Database & Storage
 - **Database:** PostgreSQL (hosted on Supabase)
-- **ORM:** Prisma
+- **ORM:** Prisma 6+
 - **Migrations:** Prisma Migrate
 - **File Storage:** Supabase Storage
 - **Auth Provider:** Supabase Auth (email/password, OAuth)
@@ -90,36 +90,24 @@ This stack is optimized for a solo founder building web + mobile apps with AI as
 
 ### Key Libraries & Dependencies
 
-**Shared (Web + Mobile):**
-```json
-{
-  "@supabase/supabase-js": "^2.39.0",
-  "@tanstack/react-query": "^5.0.0",
-  "zod": "^3.22.0",
-  "zustand": "^4.4.0"
-}
-```
+**Core Libraries (both platforms):**
+- Supabase JS Client - Auth and realtime
+- TanStack Query v5 - Data fetching and caching
+- Zod - Schema validation
+- Zustand - State management
 
-**Web Only:**
-```json
-{
-  "next": "^14.0.0",
-  "react": "^18.2.0",
-  "tailwindcss": "^3.4.0",
-  "@prisma/client": "^5.7.0",
-  "prisma": "^5.7.0"
-}
-```
+**Web:**
+- Next.js 15+ with React 19
+- Tailwind CSS
+- Prisma 6+ (ORM)
 
-**Mobile Only:**
-```json
-{
-  "expo": "~50.0.0",
-  "expo-router": "^3.4.0",
-  "nativewind": "^4.0.0",
-  "expo-secure-store": "^12.8.0"
-}
-```
+**Mobile:**
+- Expo SDK 54+ with React Native
+- Expo Router
+- NativeWind (Tailwind for RN)
+- Expo SecureStore
+
+> **Note:** See `package.json` in each project for current dependency versions. This document specifies architectural choices and minimum major versions, not exact semver.
 
 ### Code Sharing Strategy
 - **Types:** Copy/paste between web and mobile initially (optimize later if needed)
