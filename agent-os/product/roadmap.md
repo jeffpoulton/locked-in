@@ -16,7 +16,7 @@ The foundation: users can deposit money, complete daily habits, and recover thei
 
 3. [ ] Stripe Integration — Set up Stripe Connect for deposit collection and automated payouts, including webhook handling for payment events and secure key management. `M`
 
-4. [ ] Contract Creation Flow — Build the UI and API for users to create a new habit contract: define the habit, set deposit amount ($10-$1000), choose cycle length (7-90 days), and process the initial deposit via Stripe. `L`
+4. [ ] Contract Creation Flow — Build the UI and API for users to create a new habit contract: define the habit, set deposit amount ($100-$1000), choose cycle length (14-21 days, with14 and 21 being recommended), and process the initial deposit via Stripe. `L`
 
 5. [ ] Variable Reward Allocation Algorithm — Implement the core VIDC algorithm that randomly distributes the deposited amount across 20-85% of contract days with varying reward amounts (2-80% of principal per day). `M`
 

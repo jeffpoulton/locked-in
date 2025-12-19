@@ -4,7 +4,7 @@
 
 **Locked In** is the only accountability coach that refunds you based on your success. Unlike coaches or apps that charge monthly fees regardless of results, Locked In flips the model: deposit your own money upfront, complete your daily habit, and earn it all back. Miss a day that had a reward? That money is forfeited - creating real stakes that drive real action.
 
-Here's the twist: you never know which days have rewards or how much they're worth. It's the same psychology that makes games hard to put down - that "maybe today's the day" feeling - except it's pushing you toward the gym instead of pulling you toward your phone.
+Here's the twist: you never know which days have rewards or how much they're worth - and you won't find out until tomorrow. Complete your habit today, then check back tomorrow to see if there was a reward waiting. It's the same psychology that makes games hard to put down - that "maybe today's the day" feeling - except it's pushing you toward the gym instead of pulling you toward your phone.
 
 ## Users
 
@@ -87,21 +87,50 @@ Unlike generic reminder apps, Locked In provides personalized AI coaching that:
 - Provides motivation when you're struggling and celebration when you succeed
 - Offers actionable guidance, not just notifications
 
-### Flexible Verification
+### Next-Day Reveal
 
-Unlike apps that only support self-reporting (easy to cheat) or require specific integrations (limiting), Locked In offers multiple verification methods:
-- Self-report with friction (prevents mindless check-offs)
-- Photo proof for visual habits
-- Integration with fitness trackers, coding platforms, meditation apps
-- AI-assisted verification for subjective habits
+You don't find out if a day had a reward until the following day. This isn't a limitation - it's a feature:
+
+- **Creates anticipation:** You have a reason to come back and check in tomorrow
+- **Reinforces the habit loop:** Opening the app becomes part of the daily ritual
+- **Prevents gaming:** You can't decide whether to "pay the cost" of skipping because you don't know the cost until it's too late
+- **Builds suspense:** Did yesterday's workout have a $2 reward or a $20 reward? You'll find out today.
+
+This delayed reveal turns every morning into a small moment of discovery - and keeps users engaged throughout the cycle.
+
+### Your Wallet
+
+Recovered money doesn't trickle back to your bank account in micro-refunds. Instead, it accumulates in your Locked In wallet throughout the cycle:
+
+- **During the cycle:** Completed reward days add to your wallet balance. You can watch it grow.
+- **At cycle end:** Your full wallet balance is available. No waiting, no processing delays.
+- **Rollover:** One tap to roll your balance into your next cycle. Want to go again? You're already funded.
+- **Top up:** If your balance is less than you want to stake next time, add the difference.
+- **Habit stacking:** Use your balance to run multiple habits in parallel - either sharing one reward pool or each with independent stakes.
+- **Withdraw:** It's your money. If you want it back in your bank account, you can withdraw anytime.
+
+This design minimizes transaction friction (fewer Stripe fees, faster operations) while making it effortless to keep the momentum going. The goal is to make "start another cycle" the path of least resistance.
+
+### Automatic Verification
+
+Locked In knows when you've done the work - you don't have to tell it. By connecting to the apps and devices you already use, verification happens invisibly:
+
+- **Fitness:** Apple Health, Strava, Peloton, Whoop, Garmin, Oura - your workout syncs automatically
+- **Coding:** GitHub commits, merged PRs, contribution activity - ship code and we see it
+- **Meditation:** Headspace, Calm, Insight Timer - finish a session and you're verified
+- **Location:** Geofencing confirms you showed up at the gym, office, or coffee shop
+- **Photo + AI:** Snap a photo of your meal, your completed work, your morning routine - vision AI confirms it's real
+
+This removes friction from the right place (proving you did the thing) and keeps it where it belongs (deciding whether to skip). Manual self-report exists as a fallback for habits that genuinely can't be tracked, but it's the exception, not the rule.
 
 ## Key Features
 
 ### Core Features
-- **Deposit Contracts:** Set your stake, cycle length, and habit - the system handles the rest
-- **Variable Reward Allocation:** Proprietary algorithm distributes your deposit across random days with varying amounts
-- **Daily Action Logging:** Multiple verification methods to prove completion
-- **Automatic Recovery:** Complete the action, recover the money - instant feedback
+- **Deposit & Stake:** Set your amount, cycle length, and habit - the system handles the rest
+- **Hidden Reward Distribution:** Algorithm distributes your deposit across random days with varying amounts - you never know which days or how much
+- **Automatic Verification:** Connect your apps and devices once, then forget about it - Locked In detects when you've completed your habit
+- **Next-Day Reveal:** Check in each day to discover if yesterday had a reward - and watch your wallet balance grow
+- **Wallet & Rollover:** Recovered money accumulates in your wallet; roll it into your next cycle with one tap
 
 ### Coaching Features
 - **AI Accountability Coach:** Personalized check-ins, motivation, and guidance powered by Claude
@@ -119,9 +148,9 @@ Unlike apps that only support self-reporting (easy to cheat) or require specific
 - **Community:** Connect with others pursuing similar habits
 
 ### Advanced Features
-- **Multiple Simultaneous Contracts:** Run several habit contracts at once
-- **Custom Cycle Configuration:** Set your own duration (7-90 days), deposit amount ($10-$1000), and habit definitions
-- **Integration Ecosystem:** Connect with Apple Health, Fitbit, Strava, GitHub, and more
+- **Habit Stacking:** Run multiple habits in parallel - each with independent reward pools, or sharing from a single pool for higher stakes
+- **Custom Configuration:** Set your own duration (7-90 days), deposit amount ($10-$1000), and habit definitions
+- **Expanding Integration Library:** New app and device connections added regularly based on user demand
 
 ## Success Metrics
 
