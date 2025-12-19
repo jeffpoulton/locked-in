@@ -59,7 +59,7 @@ Traditional habit tracking apps rely on streaks, badges, and positive reinforcem
 3. **Positive framing is weak** - "Earn a badge!" doesn't compete with Netflix
 4. **Social accountability is awkward** - Nobody wants to text their friend "I didn't work out today"
 
-**Our Solution:** Variable Interval Deposit Contracts address all four:
+**Our Solution:** Locked In addresses all four:
 1. Real money is at stake every single day
 2. Unpredictable rewards create anticipation and engagement
 3. Loss avoidance is psychologically stronger than gain seeking
