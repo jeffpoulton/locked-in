@@ -9,6 +9,11 @@ import type {
   GenerateScheduleInput,
 } from "@/schemas/reward-simulator";
 
+// Extended DayBreakdown type for UI with status field
+type DayBreakdownWithStatus = DayBreakdown & {
+  status: "completed" | "missed" | null;
+};
+
 /**
  * Admin page for testing and visualizing the VIDC reward allocation algorithm.
  *
@@ -29,8 +34,10 @@ export default function RewardSimulatorPage() {
   // Schedule state
   const [schedule, setSchedule] = useState<RewardSchedule | null>(null);
 
-  // Simulation state - track which days are completed
-  const [completedDays, setCompletedDays] = useState<Set<number>>(new Set());
+  // Simulation state - track day status: null = blank, "completed" = completed, "missed" = missed
+  const [dayStatus, setDayStatus] = useState<Map<number, "completed" | "missed" | null>>(
+    new Map()
+  );
 
   // Generate schedule mutation
   const generateMutation = useMutation({
@@ -55,7 +62,7 @@ export default function RewardSimulatorPage() {
         rewards: data.rewards,
       });
       // Reset simulation when new schedule is generated
-      setCompletedDays(new Set());
+      setDayStatus(new Map());
     },
   });
 
@@ -93,18 +100,21 @@ export default function RewardSimulatorPage() {
     setSeed(`contract-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
   }, []);
 
-  // Toggle a day's completion status
-  const toggleDay = useCallback((day: number) => {
-    setCompletedDays((prev) => {
-      const next = new Set(prev);
-      if (next.has(day)) {
-        next.delete(day);
-      } else {
-        next.add(day);
-      }
-      return next;
-    });
-  }, []);
+  // Update a day's status
+  const updateDayStatus = useCallback(
+    (day: number, status: "completed" | "missed" | null) => {
+      setDayStatus((prev) => {
+        const next = new Map(prev);
+        if (status === null) {
+          next.delete(day);
+        } else {
+          next.set(day, status);
+        }
+        return next;
+      });
+    },
+    []
+  );
 
   // Apply preset scenario
   const applyPreset = useCallback(
@@ -113,25 +123,27 @@ export default function RewardSimulatorPage() {
 
       const allDays = Array.from({ length: schedule.duration }, (_, i) => i + 1);
 
+      const newStatus = new Map<number, "completed" | "missed" | null>();
+
       switch (preset) {
         case "perfect":
-          setCompletedDays(new Set(allDays));
+          allDays.forEach((day) => newStatus.set(day, "completed"));
           break;
 
         case "miss-all":
-          setCompletedDays(new Set());
+          allDays.forEach((day) => newStatus.set(day, "missed"));
           break;
 
         case "weekend-skipper":
           // Assuming day 1 is Monday, skip Saturdays (6) and Sundays (7)
-          setCompletedDays(
-            new Set(
-              allDays.filter((day) => {
-                const dayOfWeek = ((day - 1) % 7) + 1;
-                return dayOfWeek !== 6 && dayOfWeek !== 7;
-              })
-            )
-          );
+          allDays.forEach((day) => {
+            const dayOfWeek = ((day - 1) % 7) + 1;
+            if (dayOfWeek !== 6 && dayOfWeek !== 7) {
+              newStatus.set(day, "completed");
+            } else {
+              newStatus.set(day, "missed");
+            }
+          });
           break;
 
         case "random-80":
@@ -147,9 +159,14 @@ export default function RewardSimulatorPage() {
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
           }
           const targetCount = Math.round(schedule.duration * 0.8);
-          setCompletedDays(new Set(shuffled.slice(0, targetCount)));
+          const completedDays = new Set(shuffled.slice(0, targetCount));
+          allDays.forEach((day) => {
+            newStatus.set(day, completedDays.has(day) ? "completed" : "missed");
+          });
           break;
       }
+
+      setDayStatus(newStatus);
     },
     [schedule]
   );
@@ -161,17 +178,21 @@ export default function RewardSimulatorPage() {
     const rewardsByDay = new Map(schedule.rewards.map((r) => [r.day, r.amount]));
     let totalRecovered = 0;
     let totalForfeited = 0;
-    const dayBreakdown: DayBreakdown[] = [];
+    let totalUnrevealed = 0;
+    const dayBreakdown: DayBreakdownWithStatus[] = [];
 
     for (let day = 1; day <= schedule.duration; day++) {
       const hasReward = rewardsByDay.has(day);
       const rewardAmount = rewardsByDay.get(day) ?? 0;
-      const completed = completedDays.has(day);
+      const status = dayStatus.get(day) ?? null;
+      const completed = status === "completed";
       const recovered = completed && hasReward ? rewardAmount : 0;
-      const forfeited = !completed && hasReward ? rewardAmount : 0;
+      const forfeited = status === "missed" && hasReward ? rewardAmount : 0;
+      const unrevealed = status === null && hasReward ? rewardAmount : 0;
 
       totalRecovered += recovered;
       totalForfeited += forfeited;
+      totalUnrevealed += unrevealed;
 
       dayBreakdown.push({
         day,
@@ -180,15 +201,17 @@ export default function RewardSimulatorPage() {
         completed,
         recovered,
         forfeited,
+        status,
       });
     }
 
     return {
       totalRecovered: Math.round(totalRecovered * 100) / 100,
       totalForfeited: Math.round(totalForfeited * 100) / 100,
+      totalUnrevealed: Math.round(totalUnrevealed * 100) / 100,
       dayBreakdown,
     };
-  }, [schedule, completedDays]);
+  }, [schedule, dayStatus]);
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -399,7 +422,22 @@ export default function RewardSimulatorPage() {
 
               {/* Running Totals */}
               {simulationResults && (
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div className="bg-gray-50 dark:bg-gray-900/30 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Unrevealed Amount
+                    </p>
+                    <p className="text-3xl font-bold text-gray-700 dark:text-gray-300">
+                      ${simulationResults.totalUnrevealed.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {Math.round(
+                        (simulationResults.totalUnrevealed / schedule.depositAmount) *
+                          100
+                      )}
+                      % of deposit
+                    </p>
+                  </div>
                   <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg border border-green-200 dark:border-green-800">
                     <p className="text-sm text-green-600 dark:text-green-400">
                       Recovered Amount
@@ -441,7 +479,7 @@ export default function RewardSimulatorPage() {
                   Day-by-Day Schedule
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
-                  Click on a day to toggle completion status
+                  Use the dropdown to mark each day as Completed or Missed
                 </p>
               </div>
               <div className="overflow-x-auto">
@@ -452,13 +490,13 @@ export default function RewardSimulatorPage() {
                         Day
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Action
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Has Reward
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Amount
-                      </th>
-                      <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Status
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Outcome
@@ -466,70 +504,87 @@ export default function RewardSimulatorPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {simulationResults?.dayBreakdown.map((day) => (
-                      <tr
-                        key={day.day}
-                        onClick={() => toggleDay(day.day)}
-                        className={`cursor-pointer transition-colors ${
-                          day.hasReward
-                            ? day.completed
-                              ? "bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30"
-                              : "bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30"
-                            : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                        }`}
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          Day {day.day}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          {day.hasReward ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                              Reward
-                            </span>
-                          ) : (
-                            <span className="text-gray-400">-</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          {day.hasReward ? (
-                            <span className="font-medium">
-                              ${day.rewardAmount.toFixed(2)}
-                            </span>
-                          ) : (
-                            <span className="text-gray-400">-</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <label className="inline-flex items-center cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={day.completed}
-                              onChange={() => toggleDay(day.day)}
-                              onClick={(e) => e.stopPropagation()}
-                              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
-                              {day.completed ? "Complete" : "Missed"}
-                            </span>
-                          </label>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          {day.hasReward ? (
-                            day.completed ? (
-                              <span className="text-green-600 dark:text-green-400 font-medium">
-                                +${day.recovered.toFixed(2)} recovered
+                    {simulationResults?.dayBreakdown.map((day) => {
+                      const status = day.status ?? null;
+                      return (
+                        <tr
+                          key={day.day}
+                          className={`transition-colors ${
+                            day.hasReward
+                              ? status === "completed"
+                                ? "bg-green-50 dark:bg-green-900/20"
+                                : status === "missed"
+                                  ? "bg-red-50 dark:bg-red-900/20"
+                                  : ""
+                              : ""
+                          }`}
+                        >
+                          <td className="pl-6 pr-1 py-4 whitespace-nowrap text-sm font-medium">
+                            Day {day.day}
+                          </td>
+                          <td className="pl-1 pr-6 py-4 whitespace-nowrap text-left">
+                            <select
+                              value={status ?? ""}
+                              onChange={(e) => {
+                                const newStatus =
+                                  e.target.value === ""
+                                    ? null
+                                    : (e.target.value as "completed" | "missed");
+                                updateDayStatus(day.day, newStatus);
+                              }}
+                              className="px-3 py-1.5 text-sm border rounded-md bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="">-</option>
+                              <option value="completed">Completed</option>
+                              <option value="missed">Missed</option>
+                            </select>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            {status === null ? (
+                              <span className="text-gray-400">-</span>
+                            ) : day.hasReward ? (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                                Reward
                               </span>
                             ) : (
-                              <span className="text-red-600 dark:text-red-400 font-medium">
-                                -${day.forfeited.toFixed(2)} forfeited
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                                No reward
                               </span>
-                            )
-                          ) : (
-                            <span className="text-gray-400">No financial impact</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            {status === null ? (
+                              <span className="text-gray-400">-</span>
+                            ) : day.hasReward ? (
+                              <span className="font-medium">
+                                ${day.rewardAmount.toFixed(2)}
+                              </span>
+                            ) : (
+                              <span className="font-medium">$0.00</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            {day.hasReward ? (
+                              status === "completed" ? (
+                                <span className="text-green-600 dark:text-green-400 font-medium">
+                                  +${day.recovered.toFixed(2)} recovered
+                                </span>
+                              ) : status === "missed" ? (
+                                <span className="text-red-600 dark:text-red-400 font-medium">
+                                  -${day.forfeited.toFixed(2)} forfeited
+                                </span>
+                              ) : (
+                                <span className="text-gray-400">Not verified yet</span>
+                              )
+                            ) : status === null ? (
+                              <span className="text-gray-400">Not verified yet</span>
+                            ) : (
+                              <span className="text-gray-400">No financial impact</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
