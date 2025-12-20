@@ -10,7 +10,7 @@ This roadmap follows a strategic order based on technical dependencies and the m
 
 The foundation: users can deposit money, complete daily habits, and recover their stake.
 
-1. [ ] Variable Reward Allocation Algorithm & Test Harness — Implement the core VIDC algorithm that randomly distributes the deposited amount across 20-85% of contract days with varying reward amounts (2-80% of principal per day). Build an admin-facing test harness UI to visualize generated reward distributions across sample contracts and simulate user scenarios (completing/missing days) to observe reward/forfeiture outcomes. `L`
+1. [x] Variable Reward Allocation Algorithm & Test Harness — Implement the core VIDC algorithm that randomly distributes the deposited amount across 20-85% of contract days with varying reward amounts (2-80% of principal per day). Build an admin-facing test harness UI to visualize generated reward distributions across sample contracts and simulate user scenarios (completing/missing days) to observe reward/forfeiture outcomes. `L`
 
 2. [ ] User Authentication — Implement email/password and OAuth sign-up/sign-in using Supabase Auth, including session management and protected routes for both web and mobile. `M`
 
@@ -20,7 +20,7 @@ The foundation: users can deposit money, complete daily habits, and recover thei
 
 5. [ ] Wallet System — Implement in-app wallet for tracking user balances. Recovered rewards accumulate here during cycles. Support deposits from Stripe, withdrawals to bank, and balance checks. This is the central ledger for all user funds. `M`
 
-6. [ ] Contract Creation Flow — Build the UI and API for users to create a new habit contract: define the habit, set deposit amount ($100-$1000), choose cycle length (14-21 days, with 14 and 21 being recommended), and fund from wallet balance or via new Stripe deposit. `L`
+6. [ ] Contract Creation Flow — Build the UI and API for users to create a new habit contract: define the habit, set deposit amount ($100-$1000), choose cycle length (7-30 days, with 14 and 21 being recommended), and fund from wallet balance or via new Stripe deposit. `L`
 
 7. [ ] Daily Habit Logging (Self-Report Fallback) — Create the daily check-in interface where users mark their habit as complete. This is the MVP verification method and fallback for habits that can't be auto-verified. Include appropriate friction, timestamp validation, and once-per-day limits. `M`
 

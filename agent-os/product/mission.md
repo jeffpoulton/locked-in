@@ -149,7 +149,7 @@ This removes friction from the right place (proving you did the thing) and keeps
 
 ### Advanced Features
 - **Habit Stacking:** Run multiple habits in parallel - each with independent reward pools, or sharing from a single pool for higher stakes
-- **Custom Configuration:** Set your own duration (7-90 days), deposit amount ($10-$1000), and habit definitions
+- **Custom Configuration:** Set your own duration (7-30 days), deposit amount ($100-$1,000), and habit definitions
 - **Expanding Integration Library:** New app and device connections added regularly based on user demand
 
 ## Success Metrics
