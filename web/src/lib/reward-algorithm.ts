@@ -68,7 +68,7 @@ export function generateRewardSchedule(input: GenerateScheduleInput): RewardSche
  * Uses a weighted random distribution that:
  * - Ensures each reward is between 2-80% of the deposit
  * - Guarantees all rewards sum to exactly 100% of the deposit
- * - Handles the final reward specially to absorb any rounding errors
+ * - All rewards are whole dollar amounts (no cents)
  *
  * @param random - The seeded random number generator
  * @param rewardDays - Array of day numbers that will receive rewards
@@ -82,13 +82,14 @@ function distributeRewards(
 ): Reward[] {
   const numRewards = rewardDays.length;
 
-  // Calculate absolute min/max amounts per reward
-  const minAmount = depositAmount * CONSTRAINTS.MIN_REWARD_PERCENTAGE;
-  const maxAmount = depositAmount * CONSTRAINTS.MAX_REWARD_PERCENTAGE;
+  // Calculate absolute min/max amounts per reward (in whole dollars)
+  // Round min up and max down to ensure constraints are respected
+  const minAmount = Math.ceil(depositAmount * CONSTRAINTS.MIN_REWARD_PERCENTAGE);
+  const maxAmount = Math.floor(depositAmount * CONSTRAINTS.MAX_REWARD_PERCENTAGE);
 
-  // Special case: single reward day gets the entire deposit
+  // Special case: single reward day gets the entire deposit (rounded to whole dollar)
   if (numRewards === 1) {
-    return [{ day: rewardDays[0], amount: depositAmount }];
+    return [{ day: rewardDays[0], amount: Math.round(depositAmount) }];
   }
 
   // Generate random weights and distribute proportionally
@@ -104,16 +105,16 @@ function distributeRewards(
  * Generates an array of amounts that sum to the target while respecting min/max constraints.
  *
  * Algorithm:
- * 1. Start with minimum amounts for all rewards
+ * 1. Start with minimum amounts for all rewards (in whole dollars)
  * 2. Distribute remaining amount randomly while respecting max constraint
- * 3. Handle rounding to ensure exact sum using cents
+ * 3. Handle rounding to ensure exact sum (any remainder goes to one reward)
  *
  * @param random - The seeded random number generator
  * @param count - Number of amounts to generate
  * @param target - Total amount that all values must sum to
- * @param min - Minimum value for each amount
- * @param max - Maximum value for each amount
- * @returns Array of amounts that sum exactly to target
+ * @param min - Minimum value for each amount (in whole dollars)
+ * @param max - Maximum value for each amount (in whole dollars)
+ * @returns Array of whole dollar amounts that sum exactly to target
  */
 function generateConstrainedAmounts(
   random: () => number,
@@ -122,17 +123,15 @@ function generateConstrainedAmounts(
   min: number,
   max: number
 ): number[] {
-  // Work in cents to avoid floating-point errors
-  const targetCents = Math.round(target * 100);
-  const minCents = Math.round(min * 100);
-  const maxCents = Math.round(max * 100);
-
-  // Start each reward at minimum
-  const amountsCents = new Array(count).fill(minCents);
-  let remainingCents = targetCents - minCents * count;
+  // Round target to nearest whole dollar (handle any cents)
+  const targetDollars = Math.round(target);
+  
+  // Start each reward at minimum (already whole dollars)
+  const amounts = new Array(count).fill(min);
+  let remainingDollars = targetDollars - min * count;
 
   // Distribute remaining amount using random weights
-  if (remainingCents > 0) {
+  if (remainingDollars > 0) {
     // Generate random weights for distribution
     const weights: number[] = [];
     for (let i = 0; i < count; i++) {
@@ -141,36 +140,35 @@ function generateConstrainedAmounts(
     const totalWeight = weights.reduce((sum, w) => sum + w, 0);
 
     // Distribute proportionally to weights, respecting max constraint
-    for (let i = 0; i < count - 1 && remainingCents > 0; i++) {
-      const proportionalShare = Math.floor((weights[i] / totalWeight) * remainingCents);
-      const maxAddition = maxCents - amountsCents[i];
-      const addition = Math.min(proportionalShare, maxAddition, remainingCents);
+    for (let i = 0; i < count - 1 && remainingDollars > 0; i++) {
+      const proportionalShare = Math.floor((weights[i] / totalWeight) * remainingDollars);
+      const maxAddition = max - amounts[i];
+      const addition = Math.min(proportionalShare, maxAddition, remainingDollars);
 
-      amountsCents[i] += addition;
-      remainingCents -= addition;
+      amounts[i] += addition;
+      remainingDollars -= addition;
     }
 
     // Put any remaining amount in the last reward
     const lastIndex = count - 1;
-    const maxLastAddition = maxCents - amountsCents[lastIndex];
+    const maxLastAddition = max - amounts[lastIndex];
 
-    if (remainingCents > maxLastAddition) {
+    if (remainingDollars > maxLastAddition) {
       // Need to redistribute - find other rewards with room
-      amountsCents[lastIndex] += maxLastAddition;
-      remainingCents -= maxLastAddition;
+      amounts[lastIndex] += maxLastAddition;
+      remainingDollars -= maxLastAddition;
 
       // Distribute remaining to other slots that have room
-      for (let i = 0; i < lastIndex && remainingCents > 0; i++) {
-        const room = maxCents - amountsCents[i];
-        const addition = Math.min(room, remainingCents);
-        amountsCents[i] += addition;
-        remainingCents -= addition;
+      for (let i = 0; i < lastIndex && remainingDollars > 0; i++) {
+        const room = max - amounts[i];
+        const addition = Math.min(room, remainingDollars);
+        amounts[i] += addition;
+        remainingDollars -= addition;
       }
     } else {
-      amountsCents[lastIndex] += remainingCents;
+      amounts[lastIndex] += remainingDollars;
     }
   }
 
-  // Convert back to dollars with 2 decimal precision
-  return amountsCents.map((cents) => cents / 100);
+  return amounts;
 }

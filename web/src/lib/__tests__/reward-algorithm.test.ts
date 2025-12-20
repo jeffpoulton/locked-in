@@ -71,19 +71,37 @@ describe("generateRewardSchedule", () => {
       for (const input of testCases) {
         const schedule = generateRewardSchedule(input);
 
-        const minReward = input.depositAmount * 0.02;
-        const maxReward = input.depositAmount * 0.8;
+        const minReward = Math.ceil(input.depositAmount * 0.02);
+        const maxReward = Math.floor(input.depositAmount * 0.8);
 
         for (const reward of schedule.rewards) {
-          expect(reward.amount).toBeGreaterThanOrEqual(minReward - 0.01); // Small tolerance for cent rounding
-          expect(reward.amount).toBeLessThanOrEqual(maxReward + 0.01);
+          expect(reward.amount).toBeGreaterThanOrEqual(minReward);
+          expect(reward.amount).toBeLessThanOrEqual(maxReward);
+        }
+      }
+    });
+
+    it("generates rewards as whole dollar amounts (no cents)", () => {
+      const testCases = [
+        { seed: "whole-dollar-1", duration: 14, depositAmount: 100 },
+        { seed: "whole-dollar-2", duration: 21, depositAmount: 500 },
+        { seed: "whole-dollar-3", duration: 30, depositAmount: 333 },
+      ];
+
+      for (const input of testCases) {
+        const schedule = generateRewardSchedule(input);
+
+        for (const reward of schedule.rewards) {
+          // Check that amount is a whole number (no decimal part)
+          expect(reward.amount % 1).toBe(0);
+          expect(Number.isInteger(reward.amount)).toBe(true);
         }
       }
     });
   });
 
   describe("sum constraint", () => {
-    it("ensures all rewards sum to exactly 100% of deposit (no rounding errors)", () => {
+    it("ensures all rewards sum to exactly 100% of deposit (rounded to whole dollars)", () => {
       // Test multiple configurations to catch rounding issues
       const testCases = [
         { seed: "sum-test-1", duration: 7, depositAmount: 100 },
@@ -95,11 +113,10 @@ describe("generateRewardSchedule", () => {
       for (const input of testCases) {
         const schedule = generateRewardSchedule(input);
         const totalRewards = schedule.rewards.reduce((sum, r) => sum + r.amount, 0);
+        const expectedTotal = Math.round(input.depositAmount);
 
-        // Round both to 2 decimal places for comparison
-        expect(Math.round(totalRewards * 100) / 100).toBe(
-          Math.round(input.depositAmount * 100) / 100
-        );
+        // Sum should equal the deposit rounded to nearest whole dollar
+        expect(totalRewards).toBe(expectedTotal);
       }
     });
   });

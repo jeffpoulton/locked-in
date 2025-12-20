@@ -20,8 +20,9 @@ import type {
  */
 export default function RewardSimulatorPage() {
   // Form state
-  const [duration, setDuration] = useState(14);
-  const [depositAmount, setDepositAmount] = useState(500);
+  const [duration, setDuration] = useState(21);
+  const [depositAmount, setDepositAmount] = useState(100);
+  const [depositAmountInput, setDepositAmountInput] = useState("100");
   const [seed, setSeed] = useState(() => `contract-${Date.now()}`);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -256,10 +257,19 @@ export default function RewardSimulatorPage() {
                 min={100}
                 max={1000}
                 step={50}
-                value={depositAmount}
+                value={depositAmountInput}
                 onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  if (!isNaN(val)) setDepositAmount(val);
+                  const value = e.target.value;
+                  setDepositAmountInput(value);
+                  if (value !== "") {
+                    const val = parseFloat(value);
+                    if (!isNaN(val)) setDepositAmount(val);
+                  }
+                }}
+                onBlur={() => {
+                  if (depositAmountInput === "") {
+                    setDepositAmountInput(depositAmount.toString());
+                  }
                 }}
                 className="w-full px-3 py-2 border rounded"
                 placeholder="100 - 1000"
