@@ -425,7 +425,7 @@ export default function RewardSimulatorPage() {
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   <div className="bg-gray-50 dark:bg-gray-900/30 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Unrevealed Amount
+                      Remaining Amount
                     </p>
                     <p className="text-3xl font-bold text-gray-700 dark:text-gray-300">
                       ${simulationResults.totalUnrevealed.toFixed(2)}
