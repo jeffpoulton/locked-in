@@ -5,7 +5,7 @@
 import { loadContract, saveContract, clearContract } from "@/lib/contract-storage";
 import { useCheckInStore } from "@/stores/check-in-store";
 import { getCurrentDayNumber } from "@/lib/date-utils";
-import type { Contract } from "@/types/contract";
+import type { Contract } from "@/schemas/contract";
 
 // Mock localStorage for Node.js test environment
 const localStorageMock = (() => {

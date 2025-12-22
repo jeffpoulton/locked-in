@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { DayStatus } from "@/types/check-in";
+import type { DayStatus } from "@/schemas/check-in";
 import { formatDate, getDateForDay } from "@/lib/date-utils";
-import type { StartDate } from "@/types/contract";
+import type { StartDate } from "@/schemas/contract";
 
 interface DayDetailModalProps {
   /** Whether the modal is open */

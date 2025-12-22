@@ -8,7 +8,7 @@
 import { useContractWizardStore } from "@/stores/contract-wizard-store";
 import { createContract, isFormDataComplete } from "../contract-actions";
 import { loadContract, clearContract } from "../contract-storage";
-import type { ContractFormData } from "@/types/contract";
+import type { ContractFormData } from "@/schemas/contract";
 
 // Mock localStorage for Node.js test environment
 const localStorageMock = (() => {

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "My App",
-  description: "My App",
+  title: "Locked In",
+  description: "The only accountability coach that refunds you based on your success.",
 };
 
 export default function RootLayout({

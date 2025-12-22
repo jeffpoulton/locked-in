@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useContractWizardStore } from "@/stores/contract-wizard-store";
 import { createContract, isFormDataComplete } from "@/lib/contract-actions";
-import type { StartDate, ContractFormData } from "@/types/contract";
+import type { StartDate, ContractFormData } from "@/schemas/contract";
 
 /**
  * Step 5: Confirmation Screen

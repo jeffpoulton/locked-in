@@ -1,4 +1,4 @@
-import type { StartDate } from "@/types/contract";
+import type { StartDate } from "@/schemas/contract";
 
 /**
  * Converts a StartDate type ("today" or "tomorrow") to an actual Date object.

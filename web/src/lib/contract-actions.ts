@@ -1,4 +1,4 @@
-import type { Contract, ContractFormData } from "@/types/contract";
+import type { Contract, ContractFormData } from "@/schemas/contract";
 import { generateContractId, saveContract } from "./contract-storage";
 import { generateRewardSchedule } from "./reward-algorithm";
 

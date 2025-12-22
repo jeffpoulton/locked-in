@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { CheckInHistory, DayStatus } from "@/types/check-in";
-import type { Contract } from "@/types/contract";
+import type { CheckInHistory, DayStatus } from "@/schemas/check-in";
+import type { Contract } from "@/schemas/contract";
 import type { Reward } from "@/schemas/reward-simulator";
 import {
   saveCheckIn,

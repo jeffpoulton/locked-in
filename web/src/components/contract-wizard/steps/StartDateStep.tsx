@@ -1,7 +1,7 @@
 "use client";
 
 import { useContractWizardStore } from "@/stores/contract-wizard-store";
-import type { StartDate } from "@/types/contract";
+import type { StartDate } from "@/schemas/contract";
 
 /**
  * Step 4: Start Date Selection

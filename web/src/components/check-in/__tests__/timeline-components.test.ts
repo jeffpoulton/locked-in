@@ -2,7 +2,7 @@
  * Tests for Journey Timeline and Day Detail components.
  */
 
-import type { DayStatus } from "@/types/check-in";
+import type { DayStatus } from "@/schemas/check-in";
 
 describe("Timeline Components", () => {
   describe("JourneyTimeline", () => {

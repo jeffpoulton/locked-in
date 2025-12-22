@@ -1,6 +1,6 @@
 import { contractFormSchema } from "@/schemas/contract";
 import { saveContract, loadContract, generateContractId, clearContract } from "../contract-storage";
-import type { Contract } from "@/types/contract";
+import type { Contract } from "@/schemas/contract";
 
 // Mock localStorage for Node.js test environment
 const localStorageMock = (() => {

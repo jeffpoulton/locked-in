@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { DayTile } from "./DayTile";
-import type { DayStatus } from "@/types/check-in";
+import type { DayStatus } from "@/schemas/check-in";
 
 interface DayInfo {
   dayNumber: number;

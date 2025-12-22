@@ -16,8 +16,8 @@ import {
   JourneyTimeline,
   DayDetailModal,
 } from "@/components/check-in";
-import type { Contract } from "@/types/contract";
-import type { DayStatus } from "@/types/check-in";
+import type { Contract } from "@/schemas/contract";
+import type { DayStatus } from "@/schemas/check-in";
 
 type PageState = "loading" | "pending" | "revealing" | "done";
 

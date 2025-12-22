@@ -7,8 +7,8 @@ import {
 } from "../check-in-storage";
 import { getCurrentDayNumber, isEvening, getDateForDay } from "../date-utils";
 import { useCheckInStore } from "@/stores/check-in-store";
-import type { Contract } from "@/types/contract";
-import type { CheckInHistory } from "@/types/check-in";
+import type { Contract } from "@/schemas/contract";
+import type { CheckInHistory } from "@/schemas/check-in";
 
 // Mock localStorage for Node.js test environment
 const localStorageMock = (() => {
@@ -70,6 +70,44 @@ describe("Check-In Data Layer", () => {
       const history = loadCheckInHistory("non-existent-contract");
 
       expect(history).toEqual({});
+    });
+
+    it("returns empty history when localStorage contains invalid JSON", () => {
+      // Store invalid JSON
+      localStorage.setItem("locked-in-checkins-invalid-json", "not valid json {{{");
+
+      const history = loadCheckInHistory("invalid-json");
+
+      expect(history).toEqual({});
+    });
+
+    it("returns empty history when localStorage contains data that fails schema validation", () => {
+      // Store data with wrong structure (missing required fields)
+      const invalidData = {
+        1: { dayNumber: "not-a-number", status: "invalid-status" }, // Invalid types
+      };
+      localStorage.setItem("locked-in-checkins-invalid-schema", JSON.stringify(invalidData));
+
+      const history = loadCheckInHistory("invalid-schema");
+
+      // Should return empty object due to schema validation failure
+      expect(history).toEqual({});
+    });
+
+    it("returns valid history when localStorage contains correct data", () => {
+      const validData = {
+        1: { dayNumber: 1, status: "completed", timestamp: "2025-12-22T10:00:00.000Z", rewardAmount: 50 },
+        2: { dayNumber: 2, status: "missed", timestamp: "2025-12-23T10:00:00.000Z" },
+      };
+      localStorage.setItem("locked-in-checkins-valid-data", JSON.stringify(validData));
+
+      const history = loadCheckInHistory("valid-data");
+
+      expect(history[1]).toBeDefined();
+      expect(history[1].status).toBe("completed");
+      expect(history[1].rewardAmount).toBe(50);
+      expect(history[2]).toBeDefined();
+      expect(history[2].status).toBe("missed");
     });
 
     it("clears check-in history correctly", () => {

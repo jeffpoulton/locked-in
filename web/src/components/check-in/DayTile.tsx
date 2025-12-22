@@ -1,6 +1,6 @@
 "use client";
 
-import type { DayStatus } from "@/types/check-in";
+import type { DayStatus } from "@/schemas/check-in";
 
 interface DayTileProps {
   /** Day number in the contract (1-indexed) */

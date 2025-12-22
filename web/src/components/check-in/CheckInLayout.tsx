@@ -1,6 +1,6 @@
 "use client";
 
-import type { Contract } from "@/types/contract";
+import type { Contract } from "@/schemas/contract";
 
 interface CheckInLayoutProps {
   /** The active contract */

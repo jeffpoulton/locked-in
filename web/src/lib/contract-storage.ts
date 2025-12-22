@@ -1,4 +1,4 @@
-import type { Contract } from "@/types/contract";
+import type { Contract } from "@/schemas/contract";
 
 /** The localStorage key for storing the active contract */
 const STORAGE_KEY = "locked-in-contract";

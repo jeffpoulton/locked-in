@@ -1,7 +1,7 @@
 "use client";
 
 import { useContractWizardStore } from "@/stores/contract-wizard-store";
-import type { ContractDuration } from "@/types/contract";
+import type { ContractDuration } from "@/schemas/contract";
 
 interface DurationOption {
   value: ContractDuration;

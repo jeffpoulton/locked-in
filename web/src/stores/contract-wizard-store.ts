@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { ContractFormData, Contract } from "@/types/contract";
+import type { ContractFormData, Contract } from "@/schemas/contract";
 import {
   habitTitleSchema,
   durationSchema,

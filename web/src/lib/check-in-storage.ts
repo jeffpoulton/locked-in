@@ -1,4 +1,5 @@
-import type { CheckInHistory, CheckInRecord, DayStatus } from "@/types/check-in";
+import type { CheckInHistory, CheckInRecord, DayStatus } from "@/schemas/check-in";
+import { checkInHistorySchema } from "@/schemas/check-in";
 
 /**
  * Gets the localStorage key for a contract's check-in history.
@@ -59,7 +60,9 @@ export function loadCheckInHistory(contractId: string): CheckInHistory {
   }
 
   try {
-    return JSON.parse(serialized) as CheckInHistory;
+    const parsed = JSON.parse(serialized);
+    const result = checkInHistorySchema.safeParse(parsed);
+    return result.success ? result.data : {};
   } catch {
     return {};
   }

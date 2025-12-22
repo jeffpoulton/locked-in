@@ -7,7 +7,7 @@
 
 import { useContractWizardStore, WIZARD_STEPS, type WizardStep } from "@/stores/contract-wizard-store";
 import { habitTitleSchema, durationSchema, depositAmountSchema, startDateSchema } from "@/schemas/contract";
-import type { ContractDuration, StartDate } from "@/types/contract";
+import type { ContractDuration, StartDate } from "@/schemas/contract";
 
 // Mock localStorage for Node.js test environment
 const localStorageMock = (() => {
