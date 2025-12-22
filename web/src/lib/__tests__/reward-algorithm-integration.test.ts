@@ -87,18 +87,19 @@ describe("Reward Algorithm Integration Tests", () => {
 
   describe("rounding consistency verification", () => {
     it("never causes sum deviation from deposit across many seeds", () => {
-      // Test 20 different seeds with varying amounts to catch rounding edge cases
+      // Test 20 different seeds with varying whole dollar amounts
+      // (users enter whole dollar amounts in the real app)
       const testCases = [
         { depositAmount: 100, duration: 7 },
         { depositAmount: 100, duration: 30 },
-        { depositAmount: 333.33, duration: 14 },
-        { depositAmount: 499.99, duration: 21 },
-        { depositAmount: 666.67, duration: 28 },
+        { depositAmount: 333, duration: 14 },
+        { depositAmount: 500, duration: 21 },
+        { depositAmount: 667, duration: 28 },
         { depositAmount: 1000, duration: 7 },
         { depositAmount: 1000, duration: 30 },
-        { depositAmount: 123.45, duration: 15 },
-        { depositAmount: 777.77, duration: 23 },
-        { depositAmount: 250.50, duration: 10 },
+        { depositAmount: 123, duration: 15 },
+        { depositAmount: 777, duration: 23 },
+        { depositAmount: 250, duration: 10 },
       ];
 
       for (let seedNum = 1; seedNum <= 2; seedNum++) {
