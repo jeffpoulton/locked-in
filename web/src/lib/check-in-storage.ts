@@ -97,11 +97,12 @@ export function clearCheckInHistory(contractId: string): void {
 }
 
 /**
- * Calculates cumulative earnings from completed days up to and including a specific day.
+ * Calculates cumulative earnings from completed AND revealed days up to and including a specific day.
+ * Only counts rewards from days that have been revealed to the user.
  *
  * @param history - The check-in history
  * @param upToDayNumber - Calculate earnings up to this day (inclusive)
- * @returns Total earnings from completed days
+ * @returns Total earnings from completed and revealed days
  */
 export function calculateCumulativeEarnings(
   history: CheckInHistory,
@@ -111,7 +112,11 @@ export function calculateCumulativeEarnings(
 
   for (let day = 1; day <= upToDayNumber; day++) {
     const record = history[day];
-    if (record?.status === "completed" && record.rewardAmount !== undefined) {
+    if (
+      record?.status === "completed" &&
+      record.revealed === true &&
+      record.rewardAmount !== undefined
+    ) {
       total += record.rewardAmount;
     }
   }

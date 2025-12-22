@@ -152,7 +152,7 @@ describe("Check-In Page", () => {
       expect(updatedStore.checkInHistory[1]?.rewardAmount).toBe(150);
     });
 
-    it("should calculate total earned correctly", () => {
+    it("should calculate total earned correctly after reveal", () => {
       saveContract(mockContract);
       const store = useCheckInStore.getState();
       store.initialize(mockContract);
@@ -160,6 +160,13 @@ describe("Check-In Page", () => {
       // Complete day 1
       store.completeCheckIn();
 
+      // Before reveal, total should be 0 (unrevealed days don't count)
+      expect(useCheckInStore.getState().getTotalEarned()).toBe(0);
+
+      // Reveal day 1
+      useCheckInStore.getState().revealDay(1);
+
+      // After reveal, total should include the reward
       const totalEarned = useCheckInStore.getState().getTotalEarned();
       expect(totalEarned).toBe(150);
     });

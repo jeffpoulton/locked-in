@@ -36,6 +36,7 @@ interface DayInfo {
   dayNumber: number;
   status: DayStatus;
   rewardAmount?: number;
+  revealed?: boolean;
 }
 
 /**
@@ -300,6 +301,7 @@ export default function CheckInPage() {
   const todayRecord = checkInHistory[currentDayNumber];
   const todayReward = todayRecord?.rewardAmount ?? 0;
   const todayCompleted = todayRecord?.status === "completed";
+  const todayRevealed = todayRecord?.revealed ?? false;
 
   // Get first unrevealed day for reveal prompt
   const firstUnrevealedDay = revealQueue.length > 0 ? revealQueue[0] : null;
@@ -385,6 +387,7 @@ export default function CheckInPage() {
           <DoneState
             completed={todayCompleted}
             rewardAmount={todayReward}
+            revealed={todayRevealed}
             totalEarned={totalEarned}
             dayNumber={currentDayNumber}
             totalDays={contract.duration}
@@ -415,7 +418,7 @@ export default function CheckInPage() {
 function buildDays(
   duration: number,
   currentDayNumber: number,
-  checkInHistory: Record<number, { status: DayStatus; rewardAmount?: number }>,
+  checkInHistory: Record<number, { status: DayStatus; rewardAmount?: number; revealed?: boolean }>,
   contract: Contract
 ): DayInfo[] {
   const days: DayInfo[] = [];
@@ -424,10 +427,12 @@ function buildDays(
     const record = checkInHistory[day];
     let status: DayStatus = "pending";
     let rewardAmount: number | undefined;
+    let revealed: boolean | undefined;
 
     if (record) {
       status = record.status;
       rewardAmount = record.rewardAmount;
+      revealed = record.revealed;
     } else if (day < currentDayNumber) {
       // Past day with no record should be missed
       status = "missed";
@@ -443,6 +448,7 @@ function buildDays(
       dayNumber: day,
       status,
       rewardAmount,
+      revealed,
     });
   }
 

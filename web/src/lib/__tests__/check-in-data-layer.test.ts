@@ -157,25 +157,38 @@ describe("Check-In Data Layer", () => {
   });
 
   describe("Cumulative Earnings", () => {
-    it("computes cumulative earnings from completed days", () => {
+    it("computes cumulative earnings from completed AND revealed days", () => {
       const history: CheckInHistory = {
-        1: { dayNumber: 1, status: "completed", timestamp: "", rewardAmount: 50 },
-        2: { dayNumber: 2, status: "missed", timestamp: "" },
-        3: { dayNumber: 3, status: "completed", timestamp: "", rewardAmount: 75 },
-        4: { dayNumber: 4, status: "completed", timestamp: "", rewardAmount: 25 },
+        1: { dayNumber: 1, status: "completed", timestamp: "", rewardAmount: 50, revealed: true },
+        2: { dayNumber: 2, status: "missed", timestamp: "", revealed: true },
+        3: { dayNumber: 3, status: "completed", timestamp: "", rewardAmount: 75, revealed: true },
+        4: { dayNumber: 4, status: "completed", timestamp: "", rewardAmount: 25, revealed: true },
       };
 
       const total = calculateCumulativeEarnings(history, 4);
 
-      // Only completed days count: 50 + 75 + 25 = 150
+      // Only completed AND revealed days count: 50 + 75 + 25 = 150
       expect(total).toBe(150);
+    });
+
+    it("excludes unrevealed days from earnings", () => {
+      const history: CheckInHistory = {
+        1: { dayNumber: 1, status: "completed", timestamp: "", rewardAmount: 50, revealed: true },
+        2: { dayNumber: 2, status: "completed", timestamp: "", rewardAmount: 75, revealed: false },
+        3: { dayNumber: 3, status: "completed", timestamp: "", rewardAmount: 25 }, // no revealed field
+      };
+
+      const total = calculateCumulativeEarnings(history, 3);
+
+      // Only day 1 is revealed, so only $50 counts
+      expect(total).toBe(50);
     });
 
     it("computes cumulative earnings up to a specific day", () => {
       const history: CheckInHistory = {
-        1: { dayNumber: 1, status: "completed", timestamp: "", rewardAmount: 50 },
-        2: { dayNumber: 2, status: "completed", timestamp: "", rewardAmount: 75 },
-        3: { dayNumber: 3, status: "completed", timestamp: "", rewardAmount: 25 },
+        1: { dayNumber: 1, status: "completed", timestamp: "", rewardAmount: 50, revealed: true },
+        2: { dayNumber: 2, status: "completed", timestamp: "", rewardAmount: 75, revealed: true },
+        3: { dayNumber: 3, status: "completed", timestamp: "", rewardAmount: 25, revealed: true },
       };
 
       // Only count up to day 2

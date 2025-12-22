@@ -9,6 +9,8 @@ interface DayTileProps {
   status: DayStatus;
   /** Reward amount (only for completed days) */
   rewardAmount?: number;
+  /** Whether this day's reward has been revealed */
+  revealed?: boolean;
   /** Whether this is today */
   isToday: boolean;
   /** Whether this is a future day */
@@ -34,6 +36,7 @@ export function DayTile({
   dayNumber,
   status,
   rewardAmount,
+  revealed,
   isToday,
   isFuture,
   onTap,
@@ -104,7 +107,7 @@ export function DayTile({
           : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
       }`}
       aria-label={`Day ${dayNumber}: ${isCompleted ? "completed" : "missed"}${
-        isCompleted && rewardAmount ? `, earned $${rewardAmount}` : ""
+        isCompleted && revealed && rewardAmount ? `, earned $${rewardAmount}` : ""
       }`}
     >
       {/* Status icon */}
@@ -145,8 +148,8 @@ export function DayTile({
         {dayNumber}
       </span>
 
-      {/* Reward amount for completed days */}
-      {isCompleted && rewardAmount !== undefined && rewardAmount > 0 && (
+      {/* Reward amount for completed AND revealed days */}
+      {isCompleted && revealed && rewardAmount !== undefined && rewardAmount > 0 && (
         <span className="text-xs font-semibold text-green-600 dark:text-green-400">
           ${rewardAmount}
         </span>

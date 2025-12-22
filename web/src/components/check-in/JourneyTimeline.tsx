@@ -8,6 +8,7 @@ interface DayInfo {
   dayNumber: number;
   status: DayStatus;
   rewardAmount?: number;
+  revealed?: boolean;
 }
 
 interface JourneyTimelineProps {
@@ -92,6 +93,7 @@ export function JourneyTimeline({
                 dayNumber={day.dayNumber}
                 status={day.status}
                 rewardAmount={day.rewardAmount}
+                revealed={day.revealed}
                 isToday={isToday}
                 isFuture={isFuture}
                 onTap={!isToday && !isFuture ? () => onDayTap(day.dayNumber) : undefined}

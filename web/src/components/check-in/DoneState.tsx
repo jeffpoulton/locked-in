@@ -5,6 +5,8 @@ interface DoneStateProps {
   completed: boolean;
   /** The reward amount earned (only shown for completed days) */
   rewardAmount?: number;
+  /** Whether this day's reward has been revealed */
+  revealed?: boolean;
   /** Running total of all earnings so far */
   totalEarned: number;
   /** Current day number in the contract */
@@ -25,6 +27,7 @@ interface DoneStateProps {
 export function DoneState({
   completed,
   rewardAmount,
+  revealed,
   totalEarned,
   dayNumber,
   totalDays,
@@ -54,8 +57,8 @@ export function DoneState({
           Great job!
         </h2>
 
-        {/* Reward amount (if revealed and any) */}
-        {rewardAmount !== undefined && rewardAmount > 0 && (
+        {/* Reward amount (only shown if revealed) */}
+        {revealed && rewardAmount !== undefined && rewardAmount > 0 && (
           <p className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">
             +${rewardAmount}
           </p>
