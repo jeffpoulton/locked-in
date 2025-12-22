@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { loadContract } from "@/lib/contract-storage";
 import { useCheckInStore } from "@/stores/check-in-store";
 import { isEvening } from "@/lib/date-utils";
+import { calculateCumulativeEarnings } from "@/lib/check-in-storage";
 import {
   CheckInLayout,
   CheckInButton,
@@ -54,11 +55,16 @@ export default function CheckInPage() {
   const currentDayNumber = useCheckInStore((state) => state.currentDayNumber);
   const checkInHistory = useCheckInStore((state) => state.checkInHistory);
   const revealedReward = useCheckInStore((state) => state.revealedReward);
-  const getTotalEarned = useCheckInStore((state) => state.getTotalEarned);
   const getCumulativeTotalForDay = useCheckInStore((state) => state.getCumulativeTotalForDay);
   const getDayStatus = useCheckInStore((state) => state.getDayStatus);
   const hasCheckedInToday = useCheckInStore((state) => state.hasCheckedInToday);
   const getRewardForDay = useCheckInStore((state) => state.getRewardForDay);
+
+  // Compute total earned directly from subscribed checkInHistory to ensure reactivity
+  const totalEarned = useMemo(() => {
+    if (!contract) return 0;
+    return calculateCumulativeEarnings(checkInHistory, contract.duration);
+  }, [checkInHistory, contract]);
 
   // Initialize on mount
   useEffect(() => {
@@ -160,8 +166,6 @@ export default function CheckInPage() {
 
   // Contract is complete
   if (currentDayNumber > contract.duration) {
-    const totalEarned = getTotalEarned();
-
     return (
       <CheckInLayout
         contract={contract}
@@ -224,7 +228,6 @@ export default function CheckInPage() {
 
   // Build day info for timeline
   const days = buildDays(contract.duration, currentDayNumber, checkInHistory, contract);
-  const totalEarned = getTotalEarned();
   const todayRecord = checkInHistory[currentDayNumber];
   const todayReward = todayRecord?.rewardAmount ?? 0;
   const todayCompleted = todayRecord?.status === "completed";
