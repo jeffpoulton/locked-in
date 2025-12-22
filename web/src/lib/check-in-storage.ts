@@ -13,6 +13,7 @@ function getStorageKey(contractId: string): string {
 
 /**
  * Saves a check-in record for a specific day.
+ * New check-ins are initialized with revealed: false.
  *
  * @param contractId - The contract ID
  * @param dayNumber - The day number (1-indexed)
@@ -35,6 +36,7 @@ export function saveCheckIn(
     dayNumber,
     status,
     timestamp: new Date().toISOString(),
+    revealed: false,
     ...(rewardAmount !== undefined && { rewardAmount }),
   };
 
@@ -115,4 +117,57 @@ export function calculateCumulativeEarnings(
   }
 
   return total;
+}
+
+/**
+ * Marks a specific day as revealed in storage.
+ *
+ * @param contractId - The contract ID
+ * @param dayNumber - The day number to mark as revealed
+ */
+export function markDayRevealed(contractId: string, dayNumber: number): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const history = loadCheckInHistory(contractId);
+
+  if (!history[dayNumber]) {
+    return;
+  }
+
+  history[dayNumber] = {
+    ...history[dayNumber],
+    revealed: true,
+    revealTimestamp: new Date().toISOString(),
+  };
+
+  localStorage.setItem(getStorageKey(contractId), JSON.stringify(history));
+}
+
+/**
+ * Gets an array of day numbers that have check-in records but haven't been revealed yet.
+ * Only returns days before the current day (today's check-in shouldn't be revealed same-day).
+ *
+ * @param contractId - The contract ID
+ * @param history - The check-in history
+ * @param currentDayNumber - The current day number in the contract
+ * @returns Array of unrevealed day numbers, sorted in ascending order
+ */
+export function getUnrevealedDays(
+  contractId: string,
+  history: CheckInHistory,
+  currentDayNumber: number
+): number[] {
+  const unrevealed: number[] = [];
+
+  for (let day = 1; day < currentDayNumber; day++) {
+    const record = history[day];
+    // Day has a record but hasn't been revealed (or revealed field is missing for backward compatibility)
+    if (record && record.revealed !== true) {
+      unrevealed.push(day);
+    }
+  }
+
+  return unrevealed.sort((a, b) => a - b);
 }

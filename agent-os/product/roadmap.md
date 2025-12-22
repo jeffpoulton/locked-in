@@ -14,7 +14,7 @@ Validate the core habit cycle experience. No real money, no auth, no database—
 
 2. [x] Contract Setup Flow (Prototype) — Build the UI for users to start a new habit cycle: simple text input for habit description, duration slider (7-30 days), and deposit amount input ($100-$1000). No actual payment—just capture the intent and generate the hidden reward schedule. Store in localStorage. `M`
 
-3. [ ] Daily Check-In Experience — Create the daily interface where users mark their habit as complete. Focus on the emotional design: the friction of commitment, the satisfaction of checking off, the anticipation of what tomorrow's reveal might show. Self-report only for now. `M`
+3. [x] Daily Check-In Experience — Create the daily interface where users mark their habit as complete. Focus on the emotional design: the friction of commitment, the satisfaction of checking off, the anticipation of what tomorrow's reveal might show. Self-report only for now. `M`
 
 4. [ ] Next-Day Reveal Experience — Build the reveal moment where users discover yesterday's reward status. This is the core engagement hook. Design for emotional impact: the anticipation, the reveal animation, the joy of recovery or sting of forfeiture. `M`
 

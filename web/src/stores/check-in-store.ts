@@ -6,6 +6,8 @@ import {
   saveCheckIn,
   loadCheckInHistory,
   calculateCumulativeEarnings,
+  markDayRevealed as markDayRevealedStorage,
+  getUnrevealedDays as getUnrevealedDaysStorage,
 } from "@/lib/check-in-storage";
 import { getCurrentDayNumber } from "@/lib/date-utils";
 
@@ -23,6 +25,10 @@ export interface CheckInState {
   isRevealing: boolean;
   /** The reward amount being revealed (during animation) */
   revealedReward: number | null;
+  /** Array of day numbers pending reveal */
+  revealQueue: number[];
+  /** The day number currently being revealed */
+  currentRevealDay: number | null;
 
   // Actions
   /** Initialize the store with a contract */
@@ -39,6 +45,10 @@ export interface CheckInState {
   autoMarkMissedDays: () => void;
   /** Reset the store */
   reset: () => void;
+  /** Mark a specific day as revealed */
+  revealDay: (dayNumber: number) => void;
+  /** Set the current reveal day being shown */
+  setCurrentRevealDay: (dayNumber: number | null) => void;
 
   // Computed helpers
   /** Get total earnings from all completed days */
@@ -51,6 +61,10 @@ export interface CheckInState {
   hasCheckedInToday: () => boolean;
   /** Get the reward amount for a specific day from the schedule */
   getRewardForDay: (dayNumber: number) => number;
+  /** Get array of unrevealed day numbers */
+  getUnrevealedDays: () => number[];
+  /** Check if there are unrevealed days */
+  hasUnrevealedDays: () => boolean;
 }
 
 const initialState = {
@@ -59,6 +73,8 @@ const initialState = {
   checkInHistory: {},
   isRevealing: false,
   revealedReward: null,
+  revealQueue: [],
+  currentRevealDay: null,
 };
 
 /**
@@ -69,6 +85,7 @@ const initialState = {
  * - Completing check-ins and marking days as missed
  * - Computing cumulative earnings
  * - Managing reward reveal animation state
+ * - Tracking reveal status for next-day reveal experience
  */
 export const useCheckInStore = create<CheckInState>((set, get) => ({
   ...initialState,
@@ -77,12 +94,17 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     const currentDayNumber = getCurrentDayNumber(contract.startDate, contract.createdAt);
     const checkInHistory = loadCheckInHistory(contract.id);
 
+    // Get unrevealed days for the reveal queue
+    const revealQueue = getUnrevealedDaysStorage(contract.id, checkInHistory, currentDayNumber);
+
     set({
       contract,
       currentDayNumber,
       checkInHistory,
       isRevealing: false,
       revealedReward: null,
+      revealQueue,
+      currentRevealDay: null,
     });
 
     // Auto-mark missed days after initialization
@@ -102,7 +124,7 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     );
     const rewardAmount = reward?.amount ?? 0;
 
-    // Save to localStorage
+    // Save to localStorage (with revealed: false)
     saveCheckIn(contract.id, currentDayNumber, "completed", rewardAmount);
 
     // Update state
@@ -114,6 +136,7 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
           status: "completed",
           timestamp: new Date().toISOString(),
           rewardAmount,
+          revealed: false,
         },
       },
     });
@@ -137,17 +160,19 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
           dayNumber: currentDayNumber,
           status: "missed",
           timestamp: new Date().toISOString(),
+          revealed: false,
         },
       },
     });
   },
 
   loadHistory: () => {
-    const { contract } = get();
+    const { contract, currentDayNumber } = get();
     if (!contract) return;
 
     const checkInHistory = loadCheckInHistory(contract.id);
-    set({ checkInHistory });
+    const revealQueue = getUnrevealedDaysStorage(contract.id, checkInHistory, currentDayNumber);
+    set({ checkInHistory, revealQueue });
   },
 
   setRevealing: (isRevealing: boolean, reward: number | null = null) => {
@@ -170,18 +195,51 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
           dayNumber: day,
           status: "missed",
           timestamp: new Date().toISOString(),
+          revealed: false,
         };
         updated = true;
       }
     }
 
     if (updated) {
-      set({ checkInHistory: newHistory });
+      // Update reveal queue after marking missed days
+      const revealQueue = getUnrevealedDaysStorage(contract.id, newHistory, currentDayNumber);
+      set({ checkInHistory: newHistory, revealQueue });
     }
   },
 
   reset: () => {
     set(initialState);
+  },
+
+  revealDay: (dayNumber: number) => {
+    const { contract, checkInHistory, revealQueue } = get();
+    if (!contract) return;
+
+    // Mark as revealed in storage
+    markDayRevealedStorage(contract.id, dayNumber);
+
+    // Update local state
+    const updatedHistory = {
+      ...checkInHistory,
+      [dayNumber]: {
+        ...checkInHistory[dayNumber],
+        revealed: true,
+        revealTimestamp: new Date().toISOString(),
+      },
+    };
+
+    // Remove from reveal queue
+    const updatedQueue = revealQueue.filter((d) => d !== dayNumber);
+
+    set({
+      checkInHistory: updatedHistory,
+      revealQueue: updatedQueue,
+    });
+  },
+
+  setCurrentRevealDay: (dayNumber: number | null) => {
+    set({ currentRevealDay: dayNumber });
   },
 
   getTotalEarned: () => {
@@ -227,5 +285,15 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
       (r: Reward) => r.day === dayNumber
     );
     return reward?.amount ?? 0;
+  },
+
+  getUnrevealedDays: (): number[] => {
+    const { revealQueue } = get();
+    return revealQueue;
+  },
+
+  hasUnrevealedDays: (): boolean => {
+    const { revealQueue } = get();
+    return revealQueue.length > 0;
   },
 }));

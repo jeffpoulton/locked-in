@@ -20,15 +20,19 @@ export const checkInRecordSchema = z.object({
   timestamp: z.string().datetime(),
   /** Reward amount earned (only present for completed days with rewards) */
   rewardAmount: z.number().optional(),
+  /** Whether the reward for this day has been revealed to the user */
+  revealed: z.boolean().optional(),
+  /** ISO timestamp when the reveal occurred (separate from check-in timestamp) */
+  revealTimestamp: z.string().datetime().optional(),
 });
 
 /**
  * Schema for check-in history for a contract, keyed by day number.
+ * The key is a string representation of the day number, validated via record schema.
  */
-export const checkInHistorySchema = z.record(z.coerce.number(), checkInRecordSchema);
+export const checkInHistorySchema = z.record(z.string(), checkInRecordSchema);
 
 // Inferred TypeScript types from schemas
 export type DayStatus = z.infer<typeof dayStatusSchema>;
 export type CheckInRecord = z.infer<typeof checkInRecordSchema>;
 export type CheckInHistory = z.infer<typeof checkInHistorySchema>;
-

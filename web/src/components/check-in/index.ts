@@ -7,3 +7,6 @@ export { DayTile } from "./DayTile";
 export { JourneyTimeline } from "./JourneyTimeline";
 export { DayDetailModal } from "./DayDetailModal";
 export { CheckInLayout } from "./CheckInLayout";
+export { NextDayReveal } from "./NextDayReveal";
+export { RevealPrompt } from "./RevealPrompt";
+export { CheckInConfirmation } from "./CheckInConfirmation";

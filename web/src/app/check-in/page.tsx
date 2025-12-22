@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { loadContract } from "@/lib/contract-storage";
 import { useCheckInStore } from "@/stores/check-in-store";
@@ -12,14 +12,25 @@ import {
   MissedDayButton,
   DoneState,
   EveningReminder,
-  RewardReveal,
   JourneyTimeline,
   DayDetailModal,
+  NextDayReveal,
+  RevealPrompt,
+  CheckInConfirmation,
 } from "@/components/check-in";
 import type { Contract } from "@/schemas/contract";
 import type { DayStatus } from "@/schemas/check-in";
 
-type PageState = "loading" | "pending" | "revealing" | "done";
+/**
+ * Page states for the check-in flow.
+ * - loading: Initial state while loading contract
+ * - reveal-prompt: Prompting user to reveal unrevealed past days
+ * - revealing: Showing the reveal animation for a past day
+ * - pending: Awaiting today's check-in action
+ * - confirming: Showing confirmation after check-in (no same-day reveal)
+ * - done: Today's check-in is complete
+ */
+type PageState = "loading" | "reveal-prompt" | "revealing" | "pending" | "confirming" | "done";
 
 interface DayInfo {
   dayNumber: number;
@@ -36,7 +47,8 @@ interface DayInfo {
  * Features:
  * - Loads contract on mount
  * - Redirects to /contract/new if no contract
- * - Full check-in flow: pending -> revealing -> done
+ * - Next-day reveal flow: reveal-prompt -> revealing -> pending/done
+ * - Check-in flow: pending -> confirming -> done (no same-day reveal)
  * - Journey timeline with day detail modal
  * - Automatic missed day detection
  */
@@ -46,19 +58,22 @@ export default function CheckInPage() {
   const [contract, setContract] = useState<Contract | null>(null);
   const [showEvening, setShowEvening] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [currentRevealDay, setCurrentRevealDay] = useState<number | null>(null);
 
   // Store state
   const initialize = useCheckInStore((state) => state.initialize);
   const completeCheckIn = useCheckInStore((state) => state.completeCheckIn);
   const markDayMissed = useCheckInStore((state) => state.markDayMissed);
-  const setRevealing = useCheckInStore((state) => state.setRevealing);
   const currentDayNumber = useCheckInStore((state) => state.currentDayNumber);
   const checkInHistory = useCheckInStore((state) => state.checkInHistory);
-  const revealedReward = useCheckInStore((state) => state.revealedReward);
   const getCumulativeTotalForDay = useCheckInStore((state) => state.getCumulativeTotalForDay);
   const getDayStatus = useCheckInStore((state) => state.getDayStatus);
   const hasCheckedInToday = useCheckInStore((state) => state.hasCheckedInToday);
   const getRewardForDay = useCheckInStore((state) => state.getRewardForDay);
+  const revealQueue = useCheckInStore((state) => state.revealQueue);
+  const hasUnrevealedDays = useCheckInStore((state) => state.hasUnrevealedDays);
+  const revealDay = useCheckInStore((state) => state.revealDay);
+  const getUnrevealedDays = useCheckInStore((state) => state.getUnrevealedDays);
 
   // Compute total earned directly from subscribed checkInHistory to ensure reactivity
   const totalEarned = useMemo(() => {
@@ -81,45 +96,99 @@ export default function CheckInPage() {
 
   // Determine page state after initialization
   useEffect(() => {
-    if (!contract) return;
+    if (!contract || pageState !== "loading") return;
 
-    const checkedIn = hasCheckedInToday();
-    if (checkedIn) {
+    // Check for unrevealed days first (takes priority)
+    if (hasUnrevealedDays()) {
+      setPageState("reveal-prompt");
+    } else if (hasCheckedInToday()) {
       setPageState("done");
     } else {
       setPageState("pending");
       setShowEvening(isEvening());
     }
-  }, [contract, currentDayNumber, checkInHistory, hasCheckedInToday]);
+  }, [contract, currentDayNumber, checkInHistory, hasCheckedInToday, hasUnrevealedDays, pageState]);
 
-  // Handle check-in button tap
-  const handleCheckIn = () => {
-    const reward = getRewardForDay(currentDayNumber);
-    setRevealing(true, reward);
+  // Handle reveal prompt - user wants to see reveal
+  const handleReveal = useCallback(() => {
+    const unrevealed = getUnrevealedDays();
+    if (unrevealed.length > 0) {
+      setCurrentRevealDay(unrevealed[0]);
+      setPageState("revealing");
+    }
+  }, [getUnrevealedDays]);
+
+  // Handle skip reveal - user wants to proceed without reveal
+  const handleSkipReveal = useCallback(() => {
+    if (hasCheckedInToday()) {
+      setPageState("done");
+    } else {
+      setPageState("pending");
+      setShowEvening(isEvening());
+    }
+  }, [hasCheckedInToday]);
+
+  // Handle reveal animation complete
+  const handleRevealComplete = useCallback(() => {
+    if (currentRevealDay !== null) {
+      // Mark the day as revealed in the store
+      revealDay(currentRevealDay);
+      setCurrentRevealDay(null);
+
+      // Check if more days need reveal
+      const remainingUnrevealed = getUnrevealedDays();
+      if (remainingUnrevealed.length > 0) {
+        // More days to reveal - go back to prompt
+        setPageState("reveal-prompt");
+      } else {
+        // No more unrevealed days - proceed based on today's check-in status
+        if (hasCheckedInToday()) {
+          setPageState("done");
+        } else {
+          setPageState("pending");
+          setShowEvening(isEvening());
+        }
+      }
+    }
+  }, [currentRevealDay, revealDay, getUnrevealedDays, hasCheckedInToday]);
+
+  // Handle check-in button tap - NO SAME-DAY REVEAL
+  const handleCheckIn = useCallback(() => {
     completeCheckIn();
-    setPageState("revealing");
-  };
+    // Transition to confirming state (not revealing)
+    setPageState("confirming");
+  }, [completeCheckIn]);
 
-  // Handle reward reveal completion
-  const handleRevealComplete = () => {
-    setRevealing(false, null);
+  // Handle confirmation complete
+  const handleConfirmationComplete = useCallback(() => {
     setPageState("done");
-  };
+  }, []);
 
   // Handle missed button tap
-  const handleMarkMissed = () => {
+  const handleMarkMissed = useCallback(() => {
     markDayMissed();
     setPageState("done");
-  };
+  }, [markDayMissed]);
 
   // Handle day tap in timeline
-  const handleDayTap = (dayNumber: number) => {
+  const handleDayTap = useCallback((dayNumber: number) => {
     setSelectedDay(dayNumber);
-  };
+  }, []);
 
   // Close day detail modal
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setSelectedDay(null);
+  }, []);
+
+  // Get data for current reveal day
+  const getRevealDayData = () => {
+    if (currentRevealDay === null) return null;
+
+    const record = checkInHistory[currentRevealDay];
+    const completed = record?.status === "completed";
+    const rewardAmount = getRewardForDay(currentRevealDay);
+
+    return { dayNumber: currentRevealDay, completed, rewardAmount };
   };
 
   // Loading state
@@ -232,6 +301,12 @@ export default function CheckInPage() {
   const todayReward = todayRecord?.rewardAmount ?? 0;
   const todayCompleted = todayRecord?.status === "completed";
 
+  // Get first unrevealed day for reveal prompt
+  const firstUnrevealedDay = revealQueue.length > 0 ? revealQueue[0] : null;
+
+  // Get reveal day data
+  const revealDayData = getRevealDayData();
+
   return (
     <CheckInLayout
       contract={contract}
@@ -246,6 +321,27 @@ export default function CheckInPage() {
       }
     >
       {/* Main content based on page state */}
+      {pageState === "reveal-prompt" && firstUnrevealedDay !== null && (
+        <div className="flex-1 flex flex-col justify-center">
+          <RevealPrompt
+            dayNumber={firstUnrevealedDay}
+            onReveal={handleReveal}
+            onSkip={handleSkipReveal}
+          />
+        </div>
+      )}
+
+      {pageState === "revealing" && revealDayData !== null && (
+        <div className="flex-1 flex flex-col justify-center">
+          <NextDayReveal
+            dayNumber={revealDayData.dayNumber}
+            completed={revealDayData.completed}
+            rewardAmount={revealDayData.rewardAmount}
+            onComplete={handleRevealComplete}
+          />
+        </div>
+      )}
+
       {pageState === "pending" && (
         <div className="flex-1 flex flex-col justify-center">
           {/* Evening reminder */}
@@ -275,11 +371,11 @@ export default function CheckInPage() {
         </div>
       )}
 
-      {pageState === "revealing" && (
+      {pageState === "confirming" && (
         <div className="flex-1 flex flex-col justify-center">
-          <RewardReveal
-            rewardAmount={revealedReward ?? 0}
-            onComplete={handleRevealComplete}
+          <CheckInConfirmation
+            dayNumber={currentDayNumber}
+            onContinue={handleConfirmationComplete}
           />
         </div>
       )}

@@ -17,10 +17,10 @@ interface DoneStateProps {
  * Display state shown after a day has been resolved (completed or missed).
  *
  * Features:
- * - Completed variant: Green checkmark, reward amount, celebratory message
+ * - Completed variant: Green checkmark, celebratory message
  * - Missed variant: Red X, "Day closed" message, grayed styling
  * - Shows running total prominently
- * - Tomorrow's reward remains locked/hidden
+ * - Tomorrow's reward reveal messaging for next-day reveal experience
  */
 export function DoneState({
   completed,
@@ -54,7 +54,7 @@ export function DoneState({
           Great job!
         </h2>
 
-        {/* Reward amount (if any) */}
+        {/* Reward amount (if revealed and any) */}
         {rewardAmount !== undefined && rewardAmount > 0 && (
           <p className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">
             +${rewardAmount}
@@ -71,10 +71,10 @@ export function DoneState({
           </p>
         </div>
 
-        {/* Next step message */}
+        {/* Next step message with reveal-aware messaging */}
         {!isLastDay ? (
           <p className="text-gray-500 dark:text-gray-400">
-            Come back tomorrow for Day {dayNumber + 1}
+            Come back tomorrow to reveal today&apos;s reward
           </p>
         ) : (
           <p className="text-green-600 dark:text-green-400 font-medium">
