@@ -64,10 +64,9 @@ export function ConfirmationStep() {
       const contract = createContract(formData as ContractFormData);
       setCreatedContract(contract);
 
-      // Reset the wizard and navigate to success page or dashboard
-      // For prototype, we'll navigate to the home page
+      // Reset the wizard and navigate directly to dashboard
       resetWizard();
-      router.push("/");
+      router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create contract. Please try again.");
       setIsSubmitting(false);

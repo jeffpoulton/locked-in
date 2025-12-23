@@ -53,6 +53,14 @@ export function HabitTitleStep() {
     updateFormData({ habitTitle: value });
   };
 
+  // Handle Enter key to advance
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && isValid) {
+      e.preventDefault();
+      nextStep();
+    }
+  };
+
   // Get validation message
   const getValidationMessage = (): string | null => {
     if (!hasInteracted || habitTitle.length === 0) return null;
@@ -91,6 +99,7 @@ export function HabitTitleStep() {
           type="text"
           value={habitTitle}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           placeholder={PLACEHOLDER_EXAMPLES[placeholderIndex]}
           className={`
             w-full px-4 py-4 text-lg rounded-xl border-2 transition-colors

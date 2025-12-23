@@ -327,7 +327,7 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     const earned = get().getTotalEarned();
     const forfeited = get().getTotalForfeited();
 
-    return contract.totalAmount - earned - forfeited;
+    return contract.depositAmount - earned - forfeited;
   },
 
   getCurrentStreak: (): number => {

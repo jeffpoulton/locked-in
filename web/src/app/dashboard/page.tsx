@@ -167,7 +167,7 @@ export default function DashboardPage() {
             habitTitle={contract.habitTitle}
             currentDayNumber={0}
             totalDays={contract.duration}
-            totalAmount={contract.totalAmount}
+            totalAmount={contract.depositAmount}
           />
           <div className="flex-1 flex flex-col items-center justify-center text-center mt-12">
             <div className="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-6">
@@ -208,7 +208,7 @@ export default function DashboardPage() {
             habitTitle={contract.habitTitle}
             currentDayNumber={currentDayNumber}
             totalDays={contract.duration}
-            totalAmount={contract.totalAmount}
+            totalAmount={contract.depositAmount}
           />
           <MetricsMatrix
             earned={totalEarned}
@@ -267,7 +267,7 @@ export default function DashboardPage() {
           habitTitle={contract.habitTitle}
           currentDayNumber={currentDayNumber}
           totalDays={contract.duration}
-          totalAmount={contract.totalAmount}
+          totalAmount={contract.depositAmount}
         />
 
         {/* Metrics Matrix */}
