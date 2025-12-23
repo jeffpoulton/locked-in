@@ -16,9 +16,9 @@ Validate the core habit cycle experience. No real money, no auth, no database—
 
 3. [x] Daily Check-In Experience — Create the daily interface where users mark their habit as complete. Focus on the emotional design: the friction of commitment, the satisfaction of checking off, the anticipation of what tomorrow's reveal might show. Self-report only for now. `M`
 
-4. [ ] Next-Day Reveal Experience — Build the reveal moment where users discover yesterday's reward status. This is the core engagement hook. Design for emotional impact: the anticipation, the reveal animation, the joy of recovery or sting of forfeiture. `M`
+4. [x] Next-Day Reveal Experience — Build the reveal moment where users discover yesterday's reward status. This is the core engagement hook. Design for emotional impact: the anticipation, the reveal animation, the joy of recovery or sting of forfeiture. `M`
 
-5. [ ] Cycle Progress View — Show where the user is in their journey: days remaining, current streak, running totals of recovered/forfeited amounts. Hide future reward information. Focus on progress visualization that motivates continued engagement. `M`
+5. [x] Cycle Progress View — Show where the user is in their journey: days remaining, current streak, running totals of recovered/forfeited amounts. Hide future reward information. Focus on progress visualization that motivates continued engagement. `M`
 
 6. [ ] Cycle Completion Experience — Handle end-of-cycle: display the full journey summary, final recovery percentage, and emotional closure. Prompt to "start another cycle" (which just resets localStorage for now). `S`
 

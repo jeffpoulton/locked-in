@@ -65,6 +65,14 @@ export interface CheckInState {
   getUnrevealedDays: () => number[];
   /** Check if there are unrevealed days */
   hasUnrevealedDays: () => boolean;
+  /** Get locked amount (Total - Earned - Forfeited) */
+  getLockedAmount: () => number;
+  /** Get current streak (consecutive completed days from most recent backwards) */
+  getCurrentStreak: () => number;
+  /** Get longest streak during current cycle */
+  getLongestStreak: () => number;
+  /** Get total forfeited (revealed missed day rewards) */
+  getTotalForfeited: () => number;
 }
 
 const initialState = {
@@ -86,6 +94,7 @@ const initialState = {
  * - Computing cumulative earnings
  * - Managing reward reveal animation state
  * - Tracking reveal status for next-day reveal experience
+ * - Calculating dashboard metrics (locked amount, streaks, forfeited)
  */
 export const useCheckInStore = create<CheckInState>((set, get) => ({
   ...initialState,
@@ -149,8 +158,14 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     // Check if already has a record
     if (checkInHistory[currentDayNumber]) return;
 
-    // Save to localStorage
-    saveCheckIn(contract.id, currentDayNumber, "missed");
+    // Find reward for this day (to calculate forfeited amount)
+    const reward = contract.rewardSchedule.rewards.find(
+      (r: Reward) => r.day === currentDayNumber
+    );
+    const rewardAmount = reward?.amount ?? 0;
+
+    // Save to localStorage with reward amount
+    saveCheckIn(contract.id, currentDayNumber, "missed", rewardAmount);
 
     // Update state
     set({
@@ -161,6 +176,7 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
           status: "missed",
           timestamp: new Date().toISOString(),
           revealed: false,
+          rewardAmount,
         },
       },
     });
@@ -190,12 +206,19 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     for (let day = 1; day < currentDayNumber; day++) {
       if (!newHistory[day]) {
         // Day has no record - mark as missed
-        saveCheckIn(contract.id, day, "missed");
+        // Find reward for this day
+        const reward = contract.rewardSchedule.rewards.find(
+          (r: Reward) => r.day === day
+        );
+        const rewardAmount = reward?.amount ?? 0;
+
+        saveCheckIn(contract.id, day, "missed", rewardAmount);
         newHistory[day] = {
           dayNumber: day,
           status: "missed",
           timestamp: new Date().toISOString(),
           revealed: false,
+          rewardAmount,
         };
         updated = true;
       }
@@ -295,5 +318,69 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
   hasUnrevealedDays: (): boolean => {
     const { revealQueue } = get();
     return revealQueue.length > 0;
+  },
+
+  getLockedAmount: (): number => {
+    const { contract } = get();
+    if (!contract) return 0;
+
+    const earned = get().getTotalEarned();
+    const forfeited = get().getTotalForfeited();
+
+    return contract.totalAmount - earned - forfeited;
+  },
+
+  getCurrentStreak: (): number => {
+    const { checkInHistory, currentDayNumber } = get();
+
+    let streak = 0;
+    // Count backwards from most recent completed day
+    for (let day = currentDayNumber - 1; day >= 1; day--) {
+      const record = checkInHistory[day];
+      if (record?.status === "completed") {
+        streak++;
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  },
+
+  getLongestStreak: (): number => {
+    const { checkInHistory, currentDayNumber } = get();
+
+    let longestStreak = 0;
+    let currentStreak = 0;
+
+    for (let day = 1; day < currentDayNumber; day++) {
+      const record = checkInHistory[day];
+      if (record?.status === "completed") {
+        currentStreak++;
+        longestStreak = Math.max(longestStreak, currentStreak);
+      } else {
+        currentStreak = 0;
+      }
+    }
+
+    return longestStreak;
+  },
+
+  getTotalForfeited: (): number => {
+    const { checkInHistory } = get();
+
+    let total = 0;
+    for (const dayNumber in checkInHistory) {
+      const record = checkInHistory[dayNumber];
+      if (
+        record?.status === "missed" &&
+        record.revealed === true &&
+        record.rewardAmount !== undefined
+      ) {
+        total += record.rewardAmount;
+      }
+    }
+
+    return total;
   },
 }));

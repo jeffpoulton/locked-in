@@ -8,7 +8,7 @@ import { loadContract } from "@/lib/contract-storage";
  * Home page - routes users based on contract state.
  *
  * Routing logic:
- * - If active contract exists: redirect to /check-in
+ * - If active contract exists: redirect to /dashboard
  * - If no contract: redirect to /contract/new
  *
  * Note: This is a prototype using localStorage. Auth has been simplified
@@ -22,8 +22,8 @@ export default function Home() {
     const contract = loadContract();
 
     if (contract) {
-      // Has active contract - go to check-in
-      router.push("/check-in");
+      // Has active contract - go to dashboard
+      router.push("/dashboard");
     } else {
       // No contract - go to contract creation
       router.push("/contract/new");
