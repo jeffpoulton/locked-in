@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { loadContract } from "@/lib/contract-storage";
 import { useCheckInStore } from "@/stores/check-in-store";
+import { useDevMode } from "@/hooks/useDevMode";
 import { DashboardHeader, MetricsMatrix } from "@/components/dashboard";
 import { DashboardTimeline } from "@/components/dashboard/DashboardTimeline";
 import { CheckInModal } from "@/components/dashboard/CheckInModal";
@@ -32,6 +33,10 @@ interface DayInfo {
  */
 export default function DashboardPage() {
   const router = useRouter();
+
+  // Enable dev mode keyboard shortcuts (development only)
+  useDevMode();
+
   const [contract, setContract] = useState<Contract | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);
@@ -46,7 +51,7 @@ export default function DashboardPage() {
   const currentDayNumber = useCheckInStore((state) => state.currentDayNumber);
   const checkInHistory = useCheckInStore((state) => state.checkInHistory);
   const hasCheckedInToday = useCheckInStore((state) => state.hasCheckedInToday);
-  const getUnrevealedDays = useCheckInStore((state) => state.getUnrevealedDays);
+  const unrevealedDays = useCheckInStore((state) => state.getUnrevealedDays());
   const getRewardForDay = useCheckInStore((state) => state.getRewardForDay);
   const getDayStatus = useCheckInStore((state) => state.getDayStatus);
 
@@ -91,9 +96,6 @@ export default function DashboardPage() {
     return result;
   }, [contract, checkInHistory, getDayStatus, getRewardForDay]);
 
-  // Get unrevealed days
-  const unrevealedDays = getUnrevealedDays();
-
   // Check-in modal handlers
   const handleOpenCheckInModal = useCallback(() => {
     setIsCheckInModalOpen(true);
@@ -111,14 +113,7 @@ export default function DashboardPage() {
     markDayMissed();
   }, [markDayMissed]);
 
-  // Reveal modal handlers
-  const handleOpenRevealModal = useCallback(() => {
-    const unrevealed = getUnrevealedDays();
-    if (unrevealed.length > 0) {
-      setCurrentRevealDay(unrevealed[0]);
-      setIsRevealModalOpen(true);
-    }
-  }, [getUnrevealedDays]);
+  // Reveal modal handlers (opened via tile taps)
 
   const handleCloseRevealModal = useCallback(() => {
     setIsRevealModalOpen(false);
@@ -128,26 +123,21 @@ export default function DashboardPage() {
   const handleRevealComplete = useCallback(() => {
     if (currentRevealDay !== null) {
       revealDay(currentRevealDay);
-
-      // Check if more unrevealed days exist
-      const remaining = getUnrevealedDays();
-      if (remaining.length > 1) {
-        // More days to reveal - show next one
-        setCurrentRevealDay(remaining[1]);
-      } else {
-        // No more to reveal
-        setCurrentRevealDay(null);
-        setIsRevealModalOpen(false);
-      }
+      // Keep modal open for user to dismiss
+      // User can click next pulsing tile to reveal another day
     }
-  }, [currentRevealDay, revealDay, getUnrevealedDays]);
+  }, [currentRevealDay, revealDay]);
 
   // Day tap handler (for timeline)
   const handleDayTap = useCallback((dayNumber: number) => {
-    // For now, do nothing on day tap
-    // Could open a day detail modal in the future
-    console.log("Day tapped:", dayNumber);
-  }, []);
+    // Check if this is an unrevealed day
+    if (unrevealedDays.includes(dayNumber)) {
+      // Open reveal modal for this day
+      setCurrentRevealDay(dayNumber);
+      setIsRevealModalOpen(true);
+    }
+    // For revealed/future days, do nothing (could add day detail modal later)
+  }, [unrevealedDays]);
 
   // Loading state
   if (isLoading || !contract) {
@@ -248,9 +238,10 @@ export default function DashboardPage() {
     );
   }
 
-  // Active cycle - main dashboard view
-  const showCheckInButton = !hasCheckedInToday();
-  const showRevealButton = unrevealedDays.length > 0;
+  // Active cycle - main dashboard view (reactive to store changes)
+  const showCheckInButton = useMemo(() => {
+    return !hasCheckedInToday();
+  }, [checkInHistory, hasCheckedInToday]);
 
   // Get current reveal day data
   const revealDayData = currentRevealDay !== null ? {
@@ -287,18 +278,9 @@ export default function DashboardPage() {
         />
 
         {/* Action buttons (fixed at bottom) */}
-        <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-gray-200 dark:border-gray-800 p-6">
-          <div className="max-w-md mx-auto space-y-3">
-            {showRevealButton && (
-              <button
-                type="button"
-                onClick={handleOpenRevealModal}
-                className="w-full py-4 px-6 rounded-2xl font-bold text-lg bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-              >
-                Reveal Day {unrevealedDays[0]}
-              </button>
-            )}
-            {showCheckInButton && (
+        {showCheckInButton && (
+          <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-gray-200 dark:border-gray-800 p-6">
+            <div className="max-w-md mx-auto">
               <button
                 type="button"
                 onClick={handleOpenCheckInModal}
@@ -306,9 +288,9 @@ export default function DashboardPage() {
               >
                 Check In for Day {currentDayNumber}
               </button>
-            )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Check-in Modal */}

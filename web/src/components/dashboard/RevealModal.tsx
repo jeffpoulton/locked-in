@@ -62,9 +62,9 @@ export function RevealModal({
   }, [isOpen]);
 
   const handleComplete = useCallback(() => {
+    // Only call onRevealComplete, keep modal open for user to dismiss
     onRevealComplete();
-    onClose();
-  }, [onRevealComplete, onClose]);
+  }, [onRevealComplete]);
 
   if (!isOpen) {
     return null;
