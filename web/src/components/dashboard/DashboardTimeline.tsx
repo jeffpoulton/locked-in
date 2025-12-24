@@ -42,22 +42,25 @@ export function DashboardTimeline({
   // Determine scroll target: first unrevealed day, else current day
   const scrollTargetDay = unrevealedDays.length > 0 ? unrevealedDays[0] : currentDayNumber;
   const hasUnrevealedDays = unrevealedDays.length > 0;
+  const hasScrolledRef = useRef(false);
 
-  // Auto-scroll on mount (runs once when component first renders)
+  // Auto-scroll on mount once data is loaded
   useEffect(() => {
-    if (scrollTargetRef.current) {
-      const target = scrollTargetRef.current;
+    // Only scroll once and only when we have valid data
+    if (hasScrolledRef.current || currentDayNumber === 0) return;
 
-      // Use scrollIntoView for more reliable positioning
-      if (hasUnrevealedDays) {
-        // Unrevealed day: position at start of view
-        target.scrollIntoView({ behavior: "instant", block: "nearest", inline: "start" });
-      } else {
-        // Current day: scroll to position 0 (shows day 1 at start)
-        scrollContainerRef.current?.scrollTo({ left: 0, behavior: "instant" });
-      }
+    if (scrollTargetRef.current) {
+      // Always scroll to the target (either first unrevealed or current day)
+      // Unrevealed days go to start, current day goes to start (since day 1 can't be centered)
+      scrollTargetRef.current.scrollIntoView({
+        behavior: "instant",
+        block: "nearest",
+        inline: "start"
+      });
+
+      hasScrolledRef.current = true;
     }
-  }, []); // Empty deps = run once on mount
+  }, [currentDayNumber, hasUnrevealedDays]); // Re-run when data changes
 
   return (
     <div className="w-full mb-6">

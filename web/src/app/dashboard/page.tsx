@@ -51,7 +51,7 @@ export default function DashboardPage() {
   const currentDayNumber = useCheckInStore((state) => state.currentDayNumber);
   const checkInHistory = useCheckInStore((state) => state.checkInHistory);
   const hasCheckedInToday = useCheckInStore((state) => state.hasCheckedInToday());
-  const unrevealedDays = useCheckInStore((state) => state.getUnrevealedDays());
+  const revealQueue = useCheckInStore((state) => state.revealQueue);
   const getRewardForDay = useCheckInStore((state) => state.getRewardForDay);
   const getDayStatus = useCheckInStore((state) => state.getDayStatus);
 
@@ -131,13 +131,13 @@ export default function DashboardPage() {
   // Day tap handler (for timeline)
   const handleDayTap = useCallback((dayNumber: number) => {
     // Check if this is an unrevealed day
-    if (unrevealedDays.includes(dayNumber)) {
+    if (revealQueue.includes(dayNumber)) {
       // Open reveal modal for this day
       setCurrentRevealDay(dayNumber);
       setIsRevealModalOpen(true);
     }
     // For revealed/future days, do nothing (could add day detail modal later)
-  }, [unrevealedDays]);
+  }, [revealQueue]);
 
   // Loading state
   if (isLoading || !contract) {
@@ -209,7 +209,7 @@ export default function DashboardPage() {
           <DashboardTimeline
             days={days}
             currentDayNumber={currentDayNumber}
-            unrevealedDays={unrevealedDays}
+            unrevealedDays={revealQueue}
             onDayTap={handleDayTap}
           />
           <div className="flex-1 flex flex-col items-center justify-center text-center mt-8">
@@ -271,7 +271,7 @@ export default function DashboardPage() {
         <DashboardTimeline
           days={days}
           currentDayNumber={currentDayNumber}
-          unrevealedDays={unrevealedDays}
+          unrevealedDays={revealQueue}
           onDayTap={handleDayTap}
         />
 

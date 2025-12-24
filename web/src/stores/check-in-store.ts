@@ -239,14 +239,18 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     const { contract, checkInHistory, revealQueue } = get();
     if (!contract) return;
 
-    // Mark as revealed in storage
-    markDayRevealedStorage(contract.id, dayNumber);
+    // Check if day record exists
+    const dayRecord = checkInHistory[dayNumber];
+    if (!dayRecord) {
+      console.warn(`[Store] Cannot reveal day ${dayNumber}: no record found`);
+      return;
+    }
 
-    // Update local state
+    // Update local state FIRST for immediate UI update
     const updatedHistory = {
       ...checkInHistory,
       [dayNumber]: {
-        ...checkInHistory[dayNumber],
+        ...dayRecord,
         revealed: true,
         revealTimestamp: new Date().toISOString(),
       },
@@ -259,6 +263,9 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
       checkInHistory: updatedHistory,
       revealQueue: updatedQueue,
     });
+
+    // Then sync to localStorage
+    markDayRevealedStorage(contract.id, dayNumber);
   },
 
   setCurrentRevealDay: (dayNumber: number | null) => {
