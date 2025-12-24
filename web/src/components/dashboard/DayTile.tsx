@@ -165,19 +165,6 @@ export function DayTile({
         <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
           {dayNumber}
         </span>
-        {status === "completed" && (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2.5}
-            stroke="currentColor"
-            className="w-4 h-4 text-green-600 dark:text-green-400 absolute top-1 right-1"
-            aria-hidden="true"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
-        )}
       </div>
     );
   }

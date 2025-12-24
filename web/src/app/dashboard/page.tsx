@@ -50,7 +50,7 @@ export default function DashboardPage() {
   const revealDay = useCheckInStore((state) => state.revealDay);
   const currentDayNumber = useCheckInStore((state) => state.currentDayNumber);
   const checkInHistory = useCheckInStore((state) => state.checkInHistory);
-  const hasCheckedInToday = useCheckInStore((state) => state.hasCheckedInToday);
+  const hasCheckedInToday = useCheckInStore((state) => state.hasCheckedInToday());
   const unrevealedDays = useCheckInStore((state) => state.getUnrevealedDays());
   const getRewardForDay = useCheckInStore((state) => state.getRewardForDay);
   const getDayStatus = useCheckInStore((state) => state.getDayStatus);
@@ -239,9 +239,7 @@ export default function DashboardPage() {
   }
 
   // Active cycle - main dashboard view (reactive to store changes)
-  const showCheckInButton = useMemo(() => {
-    return !hasCheckedInToday();
-  }, [checkInHistory, hasCheckedInToday]);
+  const showCheckInButton = !hasCheckedInToday;
 
   // Get current reveal day data
   const revealDayData = currentRevealDay !== null ? {
@@ -278,9 +276,9 @@ export default function DashboardPage() {
         />
 
         {/* Action buttons (fixed at bottom) */}
-        {showCheckInButton && (
-          <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-gray-200 dark:border-gray-800 p-6">
-            <div className="max-w-md mx-auto">
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-gray-200 dark:border-gray-800 p-6">
+          <div className="max-w-md mx-auto">
+            {showCheckInButton ? (
               <button
                 type="button"
                 onClick={handleOpenCheckInModal}
@@ -288,9 +286,15 @@ export default function DashboardPage() {
               >
                 Check In for Day {currentDayNumber}
               </button>
-            </div>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-gray-500 dark:text-gray-400">
+                  Check back tomorrow to reveal today&apos;s reward
+                </p>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Check-in Modal */}

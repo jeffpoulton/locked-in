@@ -41,25 +41,23 @@ export function DashboardTimeline({
 
   // Determine scroll target: first unrevealed day, else current day
   const scrollTargetDay = unrevealedDays.length > 0 ? unrevealedDays[0] : currentDayNumber;
+  const hasUnrevealedDays = unrevealedDays.length > 0;
 
-  // Auto-scroll on mount and when target changes
+  // Auto-scroll on mount (runs once when component first renders)
   useEffect(() => {
-    if (scrollTargetRef.current && scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
+    if (scrollTargetRef.current) {
       const target = scrollTargetRef.current;
 
-      const containerWidth = container.offsetWidth;
-      const targetLeft = target.offsetLeft;
-      const targetWidth = target.offsetWidth;
-
-      // Scroll to center target
-      const scrollPosition = targetLeft - containerWidth / 2 + targetWidth / 2;
-      container.scrollTo({
-        left: Math.max(0, scrollPosition),
-        behavior: "smooth",
-      });
+      // Use scrollIntoView for more reliable positioning
+      if (hasUnrevealedDays) {
+        // Unrevealed day: position at start of view
+        target.scrollIntoView({ behavior: "instant", block: "nearest", inline: "start" });
+      } else {
+        // Current day: scroll to position 0 (shows day 1 at start)
+        scrollContainerRef.current?.scrollTo({ left: 0, behavior: "instant" });
+      }
     }
-  }, [scrollTargetDay]);
+  }, []); // Empty deps = run once on mount
 
   return (
     <div className="w-full mb-6">
