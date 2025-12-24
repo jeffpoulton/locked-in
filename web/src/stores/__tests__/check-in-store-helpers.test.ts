@@ -17,7 +17,7 @@ describe("Check-In Store Helpers", () => {
     id: "test-123",
     habitTitle: "Exercise",
     duration: 10,
-    totalAmount: 100,
+    depositAmount: 100,
     startDate: "tomorrow" as const,
     createdAt: new Date().toISOString(),
     rewardSchedule: {
