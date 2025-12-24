@@ -9,6 +9,7 @@ import { DashboardHeader, MetricsMatrix } from "@/components/dashboard";
 import { DashboardTimeline } from "@/components/dashboard/DashboardTimeline";
 import { CheckInModal } from "@/components/dashboard/CheckInModal";
 import { RevealModal } from "@/components/dashboard/RevealModal";
+import { PendingRevealModal } from "@/components/dashboard/PendingRevealModal";
 import type { Contract } from "@/schemas/contract";
 import type { DayStatus } from "@/schemas/check-in";
 
@@ -41,6 +42,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);
   const [isRevealModalOpen, setIsRevealModalOpen] = useState(false);
+  const [isPendingRevealModalOpen, setIsPendingRevealModalOpen] = useState(false);
   const [currentRevealDay, setCurrentRevealDay] = useState<number | null>(null);
 
   // Store subscriptions
@@ -135,9 +137,12 @@ export default function DashboardPage() {
       // Open reveal modal for this day
       setCurrentRevealDay(dayNumber);
       setIsRevealModalOpen(true);
+    } else if (dayNumber === currentDayNumber && hasCheckedInToday) {
+      // Today after check-in - show pending reveal modal
+      setIsPendingRevealModalOpen(true);
     }
     // For revealed/future days, do nothing (could add day detail modal later)
-  }, [revealQueue]);
+  }, [revealQueue, currentDayNumber, hasCheckedInToday]);
 
   // Loading state
   if (isLoading || !contract) {
@@ -318,6 +323,13 @@ export default function DashboardPage() {
           onRevealComplete={handleRevealComplete}
         />
       )}
+
+      {/* Pending Reveal Modal (for today after check-in) */}
+      <PendingRevealModal
+        isOpen={isPendingRevealModalOpen}
+        onClose={() => setIsPendingRevealModalOpen(false)}
+        dayNumber={currentDayNumber}
+      />
     </div>
   );
 }

@@ -155,17 +155,35 @@ export function DayTile({
     );
   }
 
-  // Status 3: Unlocked Reported (current day after check-in)
+  // Status 3: Unlocked Reported (current day after check-in, waiting for tomorrow's reveal)
   if (enhancedStatus === "unlocked-reported") {
     return (
-      <div className={`${baseClasses} border-2 border-blue-600 bg-blue-50 dark:bg-blue-900/20`}>
-        <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">
-          Today
-        </span>
-        <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+      <button
+        type="button"
+        onClick={onTap}
+        className={`${baseClasses} min-h-[44px] border-2 border-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+        aria-label={`Day ${dayNumber}: checked in, reveal available tomorrow`}
+      >
+        {/* Clock icon to indicate waiting for reveal */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="w-5 h-5 text-blue-600 dark:text-blue-400 mb-1"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
           {dayNumber}
         </span>
-      </div>
+      </button>
     );
   }
 
