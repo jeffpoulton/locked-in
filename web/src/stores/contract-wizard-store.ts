@@ -1,17 +1,18 @@
 import { create } from "zustand";
-import type { ContractFormData, Contract } from "@/schemas/contract";
+import type { ContractFormData, Contract, VerificationType } from "@/schemas/contract";
 import {
   habitTitleSchema,
   durationSchema,
   depositAmountSchema,
   startDateSchema,
+  verificationTypeSchema,
 } from "@/schemas/contract";
 
 /** Total number of steps in the wizard */
-export const WIZARD_STEPS = 5;
+export const WIZARD_STEPS = 6;
 
 /** Wizard step numbers for type safety */
-export type WizardStep = 1 | 2 | 3 | 4 | 5;
+export type WizardStep = 1 | 2 | 3 | 4 | 5 | 6;
 
 /**
  * Tracks completion/validity status for each wizard step.
@@ -22,13 +23,14 @@ export interface StepStatus {
   3: boolean;
   4: boolean;
   5: boolean;
+  6: boolean;
 }
 
 /**
  * Contract wizard store state and actions.
  */
 export interface ContractWizardState {
-  /** Current step in the wizard (1-5) */
+  /** Current step in the wizard (1-6) */
   currentStep: WizardStep;
   /** Partial form data collected during wizard flow */
   formData: Partial<ContractFormData>;
@@ -74,42 +76,65 @@ function validateStep1(formData: Partial<ContractFormData>): boolean {
 }
 
 /**
- * Validates step 2: duration must be one of 7, 14, 21, or 30.
+ * Validates step 2: verification method.
+ * - Honor system is always valid
+ * - Strava requires at least one activity type selected
  */
 function validateStep2(formData: Partial<ContractFormData>): boolean {
+  const verificationType = formData.verificationType || "honor_system";
+
+  // Honor system is always valid
+  if (verificationType === "honor_system") {
+    return true;
+  }
+
+  // Strava requires at least one activity type
+  if (verificationType === "strava") {
+    const activityTypes = formData.stravaActivityTypes;
+    return Array.isArray(activityTypes) && activityTypes.length > 0;
+  }
+
+  return false;
+}
+
+/**
+ * Validates step 3: duration must be one of 7, 14, 21, or 30.
+ */
+function validateStep3(formData: Partial<ContractFormData>): boolean {
   if (formData.duration === undefined) return false;
   const result = durationSchema.safeParse(formData.duration);
   return result.success;
 }
 
 /**
- * Validates step 3: deposit amount must be 100-1000.
+ * Validates step 4: deposit amount must be 100-1000.
  */
-function validateStep3(formData: Partial<ContractFormData>): boolean {
+function validateStep4(formData: Partial<ContractFormData>): boolean {
   if (formData.depositAmount === undefined) return false;
   const result = depositAmountSchema.safeParse(formData.depositAmount);
   return result.success;
 }
 
 /**
- * Validates step 4: start date must be "today" or "tomorrow".
+ * Validates step 5: start date must be "today" or "tomorrow".
  */
-function validateStep4(formData: Partial<ContractFormData>): boolean {
+function validateStep5(formData: Partial<ContractFormData>): boolean {
   if (!formData.startDate) return false;
   const result = startDateSchema.safeParse(formData.startDate);
   return result.success;
 }
 
 /**
- * Validates step 5: all previous steps must be complete.
- * Step 5 is the confirmation screen, valid when all form data is complete.
+ * Validates step 6: all previous steps must be complete.
+ * Step 6 is the confirmation screen, valid when all form data is complete.
  */
-function validateStep5(formData: Partial<ContractFormData>): boolean {
+function validateStep6(formData: Partial<ContractFormData>): boolean {
   return (
     validateStep1(formData) &&
     validateStep2(formData) &&
     validateStep3(formData) &&
-    validateStep4(formData)
+    validateStep4(formData) &&
+    validateStep5(formData)
   );
 }
 
@@ -123,6 +148,7 @@ function calculateStepStatus(formData: Partial<ContractFormData>): StepStatus {
     3: validateStep3(formData),
     4: validateStep4(formData),
     5: validateStep5(formData),
+    6: validateStep6(formData),
   };
 }
 
@@ -136,6 +162,7 @@ const initialState = {
     3: false,
     4: false,
     5: false,
+    6: false,
   },
   isSubmitting: false,
   createdContract: null,
@@ -149,6 +176,14 @@ const initialState = {
  * - Form data persistence across steps
  * - Step validation using Zod schemas
  * - Contract creation flow
+ *
+ * Wizard Steps:
+ * 1. Habit Title - What daily habit are you committing to?
+ * 2. Verification Method - How will you verify your check-ins? (Strava or Honor System)
+ * 3. Duration - How long is your commitment? (7/14/21/30 days)
+ * 4. Deposit - How much are you putting on the line? ($100-$1000)
+ * 5. Start Date - When do you want to start? (Today/Tomorrow)
+ * 6. Confirmation - Review and lock it in
  */
 export const useContractWizardStore = create<ContractWizardState>((set, get) => ({
   ...initialState,
@@ -195,6 +230,7 @@ export const useContractWizardStore = create<ContractWizardState>((set, get) => 
         3: false,
         4: false,
         5: false,
+        6: false,
       },
       isSubmitting: false,
       createdContract: null,

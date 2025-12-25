@@ -4,14 +4,22 @@ import type { StartDate } from "@/schemas/contract";
  * Converts a StartDate type ("today" or "tomorrow") to an actual Date object.
  * Uses the creation date as the reference point.
  *
+ * IMPORTANT: Uses the UTC date from createdAt to avoid timezone issues.
+ * If contract was created on "Dec 21 UTC", Day 1 is Dec 21 regardless of local timezone.
+ *
  * @param startDate - The start date type
  * @param createdAt - ISO timestamp of when the contract was created
- * @returns Date object representing the actual start date
+ * @returns Date object representing the actual start date (at midnight local time)
  */
 export function getActualStartDate(startDate: StartDate, createdAt: string): Date {
   const creationDate = new Date(createdAt);
-  // Reset to midnight in local timezone for consistent day calculations
-  const result = new Date(creationDate.getFullYear(), creationDate.getMonth(), creationDate.getDate());
+  // Use UTC date components to get the date the contract was created in UTC
+  // This ensures "Dec 21 UTC" is Day 1 even if local time shows Dec 20
+  const result = new Date(
+    creationDate.getUTCFullYear(),
+    creationDate.getUTCMonth(),
+    creationDate.getUTCDate()
+  );
 
   if (startDate === "tomorrow") {
     result.setDate(result.getDate() + 1);

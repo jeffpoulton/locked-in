@@ -39,6 +39,20 @@ export const depositAmountSchema = baseDepositAmountSchema;
 export const startDateSchema = z.enum(["today", "tomorrow"]);
 
 /**
+ * Schema for verification type - determines how daily check-ins are verified.
+ * "strava" - automatic verification via Strava activity data
+ * "honor_system" - manual check-in by user (default)
+ */
+export const verificationTypeSchema = z.enum(["strava", "honor_system"]).default("honor_system");
+
+/**
+ * Schema for Strava activity types - array of activity type strings.
+ * Used when verificationType is "strava" to specify which activities count.
+ * Common types: Run, Ride, Swim, Walk, Hike, Workout, Yoga
+ */
+export const stravaActivityTypesSchema = z.array(z.string()).optional();
+
+/**
  * Combined schema for all wizard form inputs.
  * Used to validate the complete form data before contract creation.
  */
@@ -47,6 +61,8 @@ export const contractFormSchema = z.object({
   duration: durationSchema,
   depositAmount: depositAmountSchema,
   startDate: startDateSchema,
+  verificationType: verificationTypeSchema,
+  stravaActivityTypes: stravaActivityTypesSchema,
 });
 
 /**
@@ -61,6 +77,8 @@ export const contractSchema = z.object({
   startDate: startDateSchema,
   createdAt: z.string().datetime({ message: "createdAt must be a valid ISO datetime" }),
   rewardSchedule: rewardScheduleSchema,
+  verificationType: verificationTypeSchema,
+  stravaActivityTypes: stravaActivityTypesSchema,
 });
 
 // Inferred TypeScript types from schemas
@@ -68,5 +86,7 @@ export type HabitTitle = z.infer<typeof habitTitleSchema>;
 export type ContractDuration = z.infer<typeof durationSchema>;
 export type DepositAmount = z.infer<typeof depositAmountSchema>;
 export type StartDate = z.infer<typeof startDateSchema>;
+export type VerificationType = z.infer<typeof verificationTypeSchema>;
+export type StravaActivityTypes = z.infer<typeof stravaActivityTypesSchema>;
 export type ContractFormData = z.infer<typeof contractFormSchema>;
 export type Contract = z.infer<typeof contractSchema>;

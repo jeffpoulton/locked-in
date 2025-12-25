@@ -17,7 +17,7 @@ const DURATION_OPTIONS: DurationOption[] = [
 ];
 
 /**
- * Step 2: Duration Selection
+ * Step 3: Duration Selection
  *
  * Allows user to select the commitment duration.
  * Features:
@@ -34,7 +34,7 @@ export function DurationStep() {
   const stepStatus = useContractWizardStore((state) => state.stepStatus);
 
   const selectedDuration = formData.duration;
-  const isValid = stepStatus[2];
+  const isValid = stepStatus[3];
 
   const handleSelect = (duration: ContractDuration) => {
     updateFormData({ duration });

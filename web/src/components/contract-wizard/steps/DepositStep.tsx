@@ -7,7 +7,7 @@ import { depositAmountSchema } from "@/schemas/contract";
 const PRESET_AMOUNTS = [100, 250, 500, 1000];
 
 /**
- * Step 3: Deposit Amount Input
+ * Step 4: Deposit Amount Input
  *
  * Allows user to select or enter a deposit amount.
  * Features:
@@ -34,7 +34,7 @@ export function DepositStep() {
   );
 
   const selectedAmount = formData.depositAmount;
-  const isValid = stepStatus[3];
+  const isValid = stepStatus[4];
 
   // Handle preset amount selection
   const handlePresetSelect = (amount: number) => {

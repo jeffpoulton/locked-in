@@ -50,6 +50,9 @@ export function createContract(formData: ContractFormData): Contract {
     startDate: formData.startDate,
     createdAt: new Date().toISOString(),
     rewardSchedule,
+    // Verification fields (default to honor_system if not set)
+    verificationType: formData.verificationType || "honor_system",
+    stravaActivityTypes: formData.stravaActivityTypes,
   };
 
   // Save to localStorage
@@ -65,7 +68,8 @@ export function createContract(formData: ContractFormData): Contract {
 export function isFormDataComplete(
   formData: Partial<ContractFormData>
 ): formData is ContractFormData {
-  return (
+  // Basic required fields
+  const hasBasicFields =
     typeof formData.habitTitle === "string" &&
     formData.habitTitle.length >= 3 &&
     formData.habitTitle.length <= 60 &&
@@ -74,6 +78,23 @@ export function isFormDataComplete(
     typeof formData.depositAmount === "number" &&
     formData.depositAmount >= 100 &&
     formData.depositAmount <= 1000 &&
-    (formData.startDate === "today" || formData.startDate === "tomorrow")
-  );
+    (formData.startDate === "today" || formData.startDate === "tomorrow");
+
+  if (!hasBasicFields) {
+    return false;
+  }
+
+  // Verification method validation
+  const verificationType = formData.verificationType || "honor_system";
+
+  if (verificationType === "strava") {
+    // Strava requires at least one activity type
+    const hasActivityTypes =
+      Array.isArray(formData.stravaActivityTypes) &&
+      formData.stravaActivityTypes.length > 0;
+    return hasActivityTypes;
+  }
+
+  // Honor system is always valid if basic fields are complete
+  return true;
 }

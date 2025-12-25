@@ -114,11 +114,16 @@ describe("Contract Wizard Store", () => {
       // Navigate to step 2
       useContractWizardStore.getState().nextStep();
 
-      // Add duration (step 2)
+      // Add verification method (step 2)
+      useContractWizardStore.getState().updateFormData({ verificationType: "honor_system" });
+      useContractWizardStore.getState().nextStep();
+
+      // Add duration (step 3)
       useContractWizardStore.getState().updateFormData({ duration: 21 });
       expect(useContractWizardStore.getState().formData.duration).toBe(21);
 
       // Navigate back to step 1
+      useContractWizardStore.getState().prevStep();
       useContractWizardStore.getState().prevStep();
 
       // Verify all data is still present
@@ -127,6 +132,7 @@ describe("Contract Wizard Store", () => {
       expect(currentFormData.duration).toBe(21);
 
       // Navigate forward and add more data
+      useContractWizardStore.getState().nextStep();
       useContractWizardStore.getState().nextStep();
       useContractWizardStore.getState().nextStep();
       useContractWizardStore.getState().updateFormData({ depositAmount: 500 });
@@ -146,18 +152,20 @@ describe("Contract Wizard Store", () => {
       // Add data and navigate through wizard
       store.updateFormData({
         habitTitle: "Read for 20 minutes",
+        verificationType: "honor_system",
         duration: 14,
         depositAmount: 250,
         startDate: "today",
       });
 
-      // Navigate to step 3
+      // Navigate to step 5
       store.nextStep(); // step 2
       useContractWizardStore.getState().nextStep(); // step 3
       useContractWizardStore.getState().nextStep(); // step 4
+      useContractWizardStore.getState().nextStep(); // step 5
 
       // Verify state exists
-      expect(useContractWizardStore.getState().currentStep).toBe(4);
+      expect(useContractWizardStore.getState().currentStep).toBe(5);
       expect(useContractWizardStore.getState().formData.habitTitle).toBe("Read for 20 minutes");
 
       // Reset the wizard
@@ -173,6 +181,7 @@ describe("Contract Wizard Store", () => {
         3: false,
         4: false,
         5: false,
+        6: false,
       });
       expect(resetState.isSubmitting).toBe(false);
       expect(resetState.createdContract).toBeNull();
@@ -184,6 +193,7 @@ describe("Contract Wizard Store", () => {
       // Prepare complete form data
       const formData = {
         habitTitle: "Meditate for 15 minutes",
+        verificationType: "honor_system" as const,
         duration: 21 as const,
         depositAmount: 500,
         startDate: "today" as const,
@@ -202,6 +212,7 @@ describe("Contract Wizard Store", () => {
       expect(contract.depositAmount).toBe(500);
       expect(contract.startDate).toBe("today");
       expect(contract.createdAt).toBeDefined();
+      expect(contract.verificationType).toBe("honor_system");
 
       // Verify reward schedule is generated
       expect(contract.rewardSchedule).toBeDefined();

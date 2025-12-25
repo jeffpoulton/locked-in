@@ -20,7 +20,9 @@ Validate the core habit cycle experience. No real money, no auth, no database—
 
 5. [x] Cycle Progress View — Show where the user is in their journey: days remaining, current streak, running totals of recovered/forfeited amounts. Hide future reward information. Focus on progress visualization that motivates continued engagement. `M`
 
-6. [ ] Cycle Completion Experience — Handle end-of-cycle: display the full journey summary, final recovery percentage, and emotional closure. Prompt to "start another cycle" (which just resets localStorage for now). `S`
+6. [x] Strava Integration Prototype — Build initial Strava OAuth flow and activity verification as the first third-party verifier. Prove the concept: user connects Strava, selects activity type (run, ride, etc.), and daily check-ins auto-verify against logged activities. Keep it simple—this informs the verifier abstraction we'll refactor into later. `M`
+
+7. [ ] Cycle Completion Experience — Handle end-of-cycle: display the full journey summary, final recovery percentage, and emotional closure. Prompt to "start another cycle" (which just resets localStorage for now). `S`
 
 ---
 
@@ -28,21 +30,21 @@ Validate the core habit cycle experience. No real money, no auth, no database—
 
 Make the prototype real. Add the systems needed for actual users with real money.
 
-7. [ ] User Authentication — Implement email/password and OAuth sign-up/sign-in using Supabase Auth, including session management and protected routes for both web and mobile. `M`
+8. [ ] User Authentication — Implement email/password and OAuth sign-up/sign-in using Supabase Auth, including session management and protected routes for both web and mobile. `M`
 
-8. [ ] User Profile & Settings — Create user profile storage and settings management including notification preferences, timezone, and display name. `S`
+9. [ ] User Profile & Settings — Create user profile storage and settings management including notification preferences, timezone, and display name. `S`
 
-9. [ ] Database Schema & Persistence — Move from localStorage to Supabase/Prisma. Store contracts, daily completions, reward schedules, and user progress. Migrate the prototype's data model to proper persistence. `M`
+10. [ ] Database Schema & Persistence — Move from localStorage to Supabase/Prisma. Store contracts, daily completions, reward schedules, and user progress. Migrate the prototype's data model to proper persistence. `M`
 
-10. [ ] Stripe Integration — Set up Stripe Connect for deposit collection and withdrawal processing, including webhook handling for payment events and secure key management. `M`
+11. [ ] Stripe Integration — Set up Stripe Connect for deposit collection and withdrawal processing, including webhook handling for payment events and secure key management. `M`
 
-11. [ ] Wallet System — Implement in-app wallet for tracking user balances. Recovered rewards accumulate here during cycles. Support deposits from Stripe, withdrawals to bank, and balance checks. This is the central ledger for all user funds. `M`
+12. [ ] Wallet System — Implement in-app wallet for tracking user balances. Recovered rewards accumulate here during cycles. Support deposits from Stripe, withdrawals to bank, and balance checks. This is the central ledger for all user funds. `M`
 
-12. [ ] Reward Processing Engine — Build the automated system that checks daily completions against the hidden reward schedule, credits recovered amounts to user wallet, and marks forfeitures. Runs after each day's completion window closes. `M`
+13. [ ] Reward Processing Engine — Build the automated system that checks daily completions against the hidden reward schedule, credits recovered amounts to user wallet, and marks forfeitures. Runs after each day's completion window closes. `M`
 
-13. [ ] Basic Notifications — Implement daily reminder notifications (push for mobile, email for web) at user-configured times to prompt habit completion. `S`
+14. [ ] Basic Notifications — Implement daily reminder notifications (push for mobile, email for web) at user-configured times to prompt habit completion. `S`
 
-14. [ ] Early Exit Flow — Implement the ability to exit a contract early with appropriate refund logic: full refund within 48 hours, 50% of remaining unrevealed rewards after. Include clear confirmation UI explaining forfeiture amount. `S`
+15. [ ] Early Exit Flow — Implement the ability to exit a contract early with appropriate refund logic: full refund within 48 hours, 50% of remaining unrevealed rewards after. Include clear confirmation UI explaining forfeiture amount. `S`
 
 ---
 
@@ -50,21 +52,21 @@ Make the prototype real. Add the systems needed for actual users with real money
 
 Add intelligence and flexibility to drive higher completion rates.
 
-15. [ ] AI Coaching Engine — Integrate Claude API to provide personalized coaching messages based on user's habit type, progress patterns, and current streak status. Include motivational check-ins and obstacle troubleshooting. `L`
+16. [ ] AI Coaching Engine — Integrate Claude API to provide personalized coaching messages based on user's habit type, progress patterns, and current streak status. Include motivational check-ins and obstacle troubleshooting. `L`
 
-16. [ ] Adaptive Messaging System — Build a system that adjusts AI coaching tone, timing, and frequency based on user engagement patterns and preferences. Learn what works for each user. `M`
+17. [ ] Adaptive Messaging System — Build a system that adjusts AI coaching tone, timing, and frequency based on user engagement patterns and preferences. Learn what works for each user. `M`
 
-17. [ ] Photo Verification — Add camera capture and photo upload for visual habit proof (e.g., gym selfie, healthy meal, completed work). Store securely in Supabase Storage. `M`
+18. [ ] Photo Verification — Add camera capture and photo upload for visual habit proof (e.g., gym selfie, healthy meal, completed work). Store securely in Supabase Storage. `M`
 
-18. [ ] Fitness Tracker Integration — Connect with Apple Health, Google Fit, and Fitbit APIs to automatically verify exercise-related habits based on activity data. `L`
+19. [ ] Extended Fitness Tracker Integration — Expand verifier framework with Apple Health and Google Fit support, building on the Strava prototype from Phase 1A. `L`
 
-19. [ ] Progress Analytics Dashboard — Create detailed analytics showing completion rates over time, best/worst days of the week, streak history, and comparison across contracts. `M`
+20. [ ] Progress Analytics Dashboard — Create detailed analytics showing completion rates over time, best/worst days of the week, streak history, and comparison across contracts. `M`
 
-20. [ ] Pattern Insights Engine — Analyze user data to surface actionable insights: "You're 40% more likely to complete your habit before 9am" or "Mondays are your weakest day." `M`
+21. [ ] Pattern Insights Engine — Analyze user data to surface actionable insights: "You're 40% more likely to complete your habit before 9am" or "Mondays are your weakest day." `M`
 
-21. [ ] Multiple Simultaneous Contracts — Enable users to run several habit contracts at once, with options for independent reward pools per habit or a shared pool for higher stakes. Unified dashboard view and combined daily check-in experience. `M`
+22. [ ] Multiple Simultaneous Contracts — Enable users to run several habit contracts at once, with options for independent reward pools per habit or a shared pool for higher stakes. Unified dashboard view and combined daily check-in experience. `M`
 
-22. [ ] Contract Templates — Offer pre-configured contract templates for common habits (daily exercise, meditation, coding, reading) with suggested durations and deposit ranges. `S`
+23. [ ] Contract Templates — Offer pre-configured contract templates for common habits (daily exercise, meditation, coding, reading) with suggested durations and deposit ranges. `S`
 
 ---
 
@@ -72,25 +74,25 @@ Add intelligence and flexibility to drive higher completion rates.
 
 Build community and expand the platform's reach.
 
-23. [ ] Accountability Partners — Allow users to invite friends to view their contract progress in real-time, with optional notifications when they complete (or miss) a day. `M`
+24. [ ] Accountability Partners — Allow users to invite friends to view their contract progress in real-time, with optional notifications when they complete (or miss) a day. `M`
 
-24. [ ] Public Commitments — Enable users to share their active contracts publicly with a unique URL, creating social accountability through visibility. `S`
+25. [ ] Public Commitments — Enable users to share their active contracts publicly with a unique URL, creating social accountability through visibility. `S`
 
-25. [ ] Community Feed — Build a feed where users can optionally share completions, milestones, and contract completions with the broader Locked In community. `L`
+26. [ ] Community Feed — Build a feed where users can optionally share completions, milestones, and contract completions with the broader Locked In community. `L`
 
-26. [ ] Coding Platform Integration — Connect with GitHub API to automatically verify coding habits based on commits, PRs, or contribution activity. `M`
+27. [ ] Coding Platform Integration — Connect with GitHub API to automatically verify coding habits based on commits, PRs, or contribution activity. `M`
 
-27. [ ] Meditation App Integration — Integrate with Headspace, Calm, or Insight Timer APIs to verify meditation habit completion. `M`
+28. [ ] Meditation App Integration — Integrate with Headspace, Calm, or Insight Timer APIs to verify meditation habit completion. `M`
 
-28. [ ] AI-Assisted Verification — Use vision AI to validate photo proofs and natural language processing to verify subjective habit completions with appropriate confidence scoring. `L`
+29. [ ] AI-Assisted Verification — Use vision AI to validate photo proofs and natural language processing to verify subjective habit completions with appropriate confidence scoring. `L`
 
-29. [ ] Achievement System — Create meaningful achievements and milestones (first contract completed, 30-day streak, $500 recovered) that celebrate user success without undermining the core mechanism. `S`
+30. [ ] Achievement System — Create meaningful achievements and milestones (first contract completed, 30-day streak, $500 recovered) that celebrate user success without undermining the core mechanism. `S`
 
-30. [ ] Referral Program — Implement a referral system where users can invite friends and both receive benefits (e.g., reduced platform fees or bonus recovery percentage). `M`
+31. [ ] Referral Program — Implement a referral system where users can invite friends and both receive benefits (e.g., reduced platform fees or bonus recovery percentage). `M`
 
-31. [ ] Advanced Notification Intelligence — Use ML to optimize notification timing and content based on when users are most likely to engage and complete their habits. `L`
+32. [ ] Advanced Notification Intelligence — Use ML to optimize notification timing and content based on when users are most likely to engage and complete their habits. `L`
 
-32. [ ] Contract Groups — Enable groups of users to start synchronized contracts together, creating shared accountability and friendly competition. `L`
+33. [ ] Contract Groups — Enable groups of users to start synchronized contracts together, creating shared accountability and friendly competition. `L`
 
 ---
 

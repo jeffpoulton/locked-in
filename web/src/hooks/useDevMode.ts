@@ -2,7 +2,18 @@
 
 import { useEffect } from "react";
 import { loadContract, saveContract } from "@/lib/contract-storage";
+import { adjustCheckInTimestamps } from "@/lib/check-in-storage";
 import { useCheckInStore } from "@/stores/check-in-store";
+
+/**
+ * Flag to indicate dev mode is currently manipulating time.
+ * Used to suppress auto-verification during time travel operations.
+ */
+let isDevModeTimeTravel = false;
+
+export function isDevModeTimeTraveling(): boolean {
+  return isDevModeTimeTravel;
+}
 
 /**
  * Development mode keyboard shortcuts for testing cycle progression.
@@ -43,15 +54,28 @@ export function useDevMode() {
         return;
       }
 
+      // Set flag to prevent auto-verification during time travel
+      isDevModeTimeTravel = true;
+
       const createdAt = new Date(contract.createdAt);
       createdAt.setDate(createdAt.getDate() - days);
       const updatedContract = { ...contract, createdAt: createdAt.toISOString() };
 
       saveContract(updatedContract);
+
+      // Also adjust check-in timestamps to match the time shift
+      // Moving contract back means check-ins also move back (negative delta)
+      adjustCheckInTimestamps(contract.id, -days);
+
       console.log(`[DevMode] Advanced ${days} day(s) forward. Contract now starts: ${createdAt.toLocaleDateString()}`);
 
       // Reinitialize store with updated contract (should trigger re-renders)
       initialize(updatedContract);
+
+      // Clear flag after a short delay to allow React to settle
+      setTimeout(() => {
+        isDevModeTimeTravel = false;
+      }, 200);
     };
 
     // Go back in time by moving contract createdAt forward
@@ -62,15 +86,28 @@ export function useDevMode() {
         return;
       }
 
+      // Set flag to prevent auto-verification during time travel
+      isDevModeTimeTravel = true;
+
       const createdAt = new Date(contract.createdAt);
       createdAt.setDate(createdAt.getDate() + days);
       const updatedContract = { ...contract, createdAt: createdAt.toISOString() };
 
       saveContract(updatedContract);
+
+      // Also adjust check-in timestamps to match the time shift
+      // Moving contract forward means check-ins also move forward (positive delta)
+      adjustCheckInTimestamps(contract.id, days);
+
       console.log(`[DevMode] Went back ${days} day(s). Contract now starts: ${createdAt.toLocaleDateString()}`);
 
       // Reinitialize store with updated contract (should trigger re-renders)
       initialize(updatedContract);
+
+      // Clear flag after a short delay to allow React to settle
+      setTimeout(() => {
+        isDevModeTimeTravel = false;
+      }, 200);
     };
 
     // Auto-complete current day and advance
@@ -103,12 +140,30 @@ export function useDevMode() {
         return;
       }
 
-      const updatedContract = { ...contract, createdAt: new Date().toISOString() };
+      // Set flag to prevent auto-verification during time travel
+      isDevModeTimeTravel = true;
+
+      // Calculate how many days we're shifting
+      const oldCreatedAt = new Date(contract.createdAt);
+      const newCreatedAt = new Date();
+      const msDelta = newCreatedAt.getTime() - oldCreatedAt.getTime();
+      const daysDelta = Math.round(msDelta / (24 * 60 * 60 * 1000));
+
+      const updatedContract = { ...contract, createdAt: newCreatedAt.toISOString() };
       saveContract(updatedContract);
+
+      // Adjust check-in timestamps by the same amount
+      adjustCheckInTimestamps(contract.id, daysDelta);
+
       console.log("[DevMode] Contract time reset to today");
 
       // Reinitialize store with updated contract (should trigger re-renders)
       initialize(updatedContract);
+
+      // Clear flag after a short delay to allow React to settle
+      setTimeout(() => {
+        isDevModeTimeTravel = false;
+      }, 200);
     };
 
     // Skip to specific day
@@ -124,23 +179,40 @@ export function useDevMode() {
         return;
       }
 
+      // Set flag to prevent auto-verification during time travel
+      isDevModeTimeTravel = true;
+
       // Calculate how many days to go back
       const daysToAdvance = dayNumber - 1;
-      const createdAt = new Date(contract.createdAt);
+      const oldCreatedAt = new Date(contract.createdAt);
+      const newCreatedAt = new Date(contract.createdAt);
 
       // Adjust based on start date
       if (contract.startDate === "tomorrow") {
-        createdAt.setDate(createdAt.getDate() - daysToAdvance + 1);
+        newCreatedAt.setDate(newCreatedAt.getDate() - daysToAdvance + 1);
       } else {
-        createdAt.setDate(createdAt.getDate() - daysToAdvance);
+        newCreatedAt.setDate(newCreatedAt.getDate() - daysToAdvance);
       }
 
-      const updatedContract = { ...contract, createdAt: createdAt.toISOString() };
+      // Calculate the delta in days between old and new createdAt
+      const msDelta = newCreatedAt.getTime() - oldCreatedAt.getTime();
+      const daysDelta = Math.round(msDelta / (24 * 60 * 60 * 1000));
+
+      const updatedContract = { ...contract, createdAt: newCreatedAt.toISOString() };
       saveContract(updatedContract);
-      console.log(`[DevMode] Skipped to Day ${dayNumber}. Contract now starts: ${createdAt.toLocaleDateString()}`);
+
+      // Adjust check-in timestamps by the same amount
+      adjustCheckInTimestamps(contract.id, daysDelta);
+
+      console.log(`[DevMode] Skipped to Day ${dayNumber}. Contract now starts: ${newCreatedAt.toLocaleDateString()}`);
 
       // Reinitialize store with updated contract (should trigger re-renders)
       initialize(updatedContract);
+
+      // Clear flag after a short delay to allow React to settle
+      setTimeout(() => {
+        isDevModeTimeTravel = false;
+      }, 200);
     };
 
     // Show help

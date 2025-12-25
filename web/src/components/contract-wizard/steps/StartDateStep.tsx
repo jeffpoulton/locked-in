@@ -4,7 +4,7 @@ import { useContractWizardStore } from "@/stores/contract-wizard-store";
 import type { StartDate } from "@/schemas/contract";
 
 /**
- * Step 4: Start Date Selection
+ * Step 5: Start Date Selection
  *
  * Allows user to choose when to start their commitment.
  * Features:
@@ -22,7 +22,7 @@ export function StartDateStep() {
   const stepStatus = useContractWizardStore((state) => state.stepStatus);
 
   const selectedStartDate = formData.startDate;
-  const isValid = stepStatus[4];
+  const isValid = stepStatus[5];
 
   // Calculate actual dates
   const today = new Date();

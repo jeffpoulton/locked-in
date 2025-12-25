@@ -176,3 +176,45 @@ export function getUnrevealedDays(
 
   return unrevealed.sort((a, b) => a - b);
 }
+
+/**
+ * Adjusts all check-in timestamps by a number of days.
+ * Used by dev mode to keep check-in timestamps consistent when simulating time travel.
+ *
+ * @param contractId - The contract ID
+ * @param daysDelta - Number of days to shift (positive = forward in time, negative = backward)
+ */
+export function adjustCheckInTimestamps(contractId: string, daysDelta: number): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const history = loadCheckInHistory(contractId);
+
+  if (Object.keys(history).length === 0) {
+    return;
+  }
+
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const msDelta = daysDelta * msPerDay;
+
+  for (const dayNumber in history) {
+    const record = history[dayNumber];
+
+    // Adjust the check-in timestamp
+    if (record.timestamp) {
+      const date = new Date(record.timestamp);
+      date.setTime(date.getTime() + msDelta);
+      record.timestamp = date.toISOString();
+    }
+
+    // Adjust the reveal timestamp if it exists
+    if (record.revealTimestamp) {
+      const date = new Date(record.revealTimestamp);
+      date.setTime(date.getTime() + msDelta);
+      record.revealTimestamp = date.toISOString();
+    }
+  }
+
+  localStorage.setItem(getStorageKey(contractId), JSON.stringify(history));
+}

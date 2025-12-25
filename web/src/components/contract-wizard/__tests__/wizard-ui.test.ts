@@ -47,25 +47,26 @@ describe("Wizard UI Components", () => {
   });
 
   describe("WizardLayout step indicator logic", () => {
-    it("shows correct step indicator for each step (1 of 5 through 5 of 5)", () => {
+    it("shows correct step indicator for each step (1 of 6 through 6 of 6)", () => {
       const store = useContractWizardStore.getState();
 
       // Helper to generate step indicator text
       const getStepIndicator = (step: WizardStep) => `Step ${step} of ${WIZARD_STEPS}`;
 
       // Verify step indicator text for each step
-      expect(getStepIndicator(1)).toBe("Step 1 of 5");
-      expect(getStepIndicator(2)).toBe("Step 2 of 5");
-      expect(getStepIndicator(3)).toBe("Step 3 of 5");
-      expect(getStepIndicator(4)).toBe("Step 4 of 5");
-      expect(getStepIndicator(5)).toBe("Step 5 of 5");
+      expect(getStepIndicator(1)).toBe("Step 1 of 6");
+      expect(getStepIndicator(2)).toBe("Step 2 of 6");
+      expect(getStepIndicator(3)).toBe("Step 3 of 6");
+      expect(getStepIndicator(4)).toBe("Step 4 of 6");
+      expect(getStepIndicator(5)).toBe("Step 5 of 6");
+      expect(getStepIndicator(6)).toBe("Step 6 of 6");
 
       // Verify store starts at step 1
       expect(store.currentStep).toBe(1);
-      expect(WIZARD_STEPS).toBe(5);
+      expect(WIZARD_STEPS).toBe(6);
     });
 
-    it("hides back button on step 1, shows on steps 2-5", () => {
+    it("hides back button on step 1, shows on steps 2-6", () => {
       const store = useContractWizardStore.getState();
 
       // Helper to determine back button visibility
@@ -74,11 +75,12 @@ describe("Wizard UI Components", () => {
       // Step 1: back button hidden
       expect(shouldShowBackButton(1)).toBe(false);
 
-      // Steps 2-5: back button visible
+      // Steps 2-6: back button visible
       expect(shouldShowBackButton(2)).toBe(true);
       expect(shouldShowBackButton(3)).toBe(true);
       expect(shouldShowBackButton(4)).toBe(true);
       expect(shouldShowBackButton(5)).toBe(true);
+      expect(shouldShowBackButton(6)).toBe(true);
     });
   });
 
@@ -113,7 +115,7 @@ describe("Wizard UI Components", () => {
     });
   });
 
-  describe("Step 2: Duration Selection", () => {
+  describe("Step 3: Duration Selection", () => {
     it("highlights selected duration option and validates selection", () => {
       const store = useContractWizardStore.getState();
 
@@ -121,14 +123,14 @@ describe("Wizard UI Components", () => {
       store.updateFormData({ habitTitle: "Valid habit" });
 
       // No selection - invalid
-      expect(useContractWizardStore.getState().stepStatus[2]).toBe(false);
+      expect(useContractWizardStore.getState().stepStatus[3]).toBe(false);
 
       // Valid selections
       const validDurations: ContractDuration[] = [7, 14, 21, 30];
 
       for (const duration of validDurations) {
         useContractWizardStore.getState().updateFormData({ duration });
-        const isValid = useContractWizardStore.getState().stepStatus[2];
+        const isValid = useContractWizardStore.getState().stepStatus[3];
         expect(isValid).toBe(true);
 
         // Verify the selected value is stored correctly
@@ -144,7 +146,7 @@ describe("Wizard UI Components", () => {
     });
   });
 
-  describe("Step 3: Deposit Amount validation", () => {
+  describe("Step 4: Deposit Amount validation", () => {
     it("validates deposit amount within $100-$1000 range", () => {
       // Below minimum - invalid
       expect(depositAmountSchema.safeParse(99).success).toBe(false);
@@ -167,13 +169,14 @@ describe("Wizard UI Components", () => {
     });
   });
 
-  describe("Step 5: Confirmation screen", () => {
+  describe("Step 6: Confirmation screen", () => {
     it("displays all entered data correctly", () => {
       const store = useContractWizardStore.getState();
 
       // Enter complete form data
       const formData = {
         habitTitle: "Meditate for 10 minutes",
+        verificationType: "honor_system" as const,
         duration: 21 as ContractDuration,
         depositAmount: 500,
         startDate: "today" as StartDate,
@@ -188,8 +191,8 @@ describe("Wizard UI Components", () => {
       expect(storedData.depositAmount).toBe(500);
       expect(storedData.startDate).toBe("today");
 
-      // Verify step 5 is valid (all data complete)
-      expect(useContractWizardStore.getState().stepStatus[5]).toBe(true);
+      // Verify step 6 is valid (all data complete)
+      expect(useContractWizardStore.getState().stepStatus[6]).toBe(true);
 
       // Helper function to format confirmation data
       const formatDuration = (days: number) => `${days} days`;
@@ -212,19 +215,19 @@ describe("Wizard UI Components", () => {
     it("prevents confirmation when form data is incomplete", () => {
       const store = useContractWizardStore.getState();
 
-      // Partial data - step 5 should be invalid
+      // Partial data - step 6 should be invalid
       store.updateFormData({ habitTitle: "Test habit" });
-      expect(useContractWizardStore.getState().stepStatus[5]).toBe(false);
+      expect(useContractWizardStore.getState().stepStatus[6]).toBe(false);
 
       store.updateFormData({ duration: 14 });
-      expect(useContractWizardStore.getState().stepStatus[5]).toBe(false);
+      expect(useContractWizardStore.getState().stepStatus[6]).toBe(false);
 
       store.updateFormData({ depositAmount: 250 });
-      expect(useContractWizardStore.getState().stepStatus[5]).toBe(false);
+      expect(useContractWizardStore.getState().stepStatus[6]).toBe(false);
 
-      // Complete data - step 5 should be valid
+      // Complete data - step 6 should be valid
       store.updateFormData({ startDate: "tomorrow" });
-      expect(useContractWizardStore.getState().stepStatus[5]).toBe(true);
+      expect(useContractWizardStore.getState().stepStatus[6]).toBe(true);
     });
   });
 });

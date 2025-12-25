@@ -4,14 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useContractWizardStore } from "@/stores/contract-wizard-store";
 import { createContract, isFormDataComplete } from "@/lib/contract-actions";
-import type { StartDate, ContractFormData } from "@/schemas/contract";
+import type { StartDate, ContractFormData, VerificationType } from "@/schemas/contract";
 
 /**
- * Step 5: Confirmation Screen
+ * Step 6: Confirmation Screen
  *
  * Displays a summary of all selections and allows the user to confirm.
  * Features:
- * - Display summary: habit title, duration, deposit amount, start date
+ * - Display summary: habit title, verification method, duration, deposit amount, start date
+ * - If Strava: show selected activity types
  * - Primary action button: "Lock it in"
  * - Back navigation to modify selections
  * - On confirm: trigger contract creation and navigate to success/dashboard
@@ -49,6 +50,18 @@ export function ConfirmationStep() {
     return `${startDate === "today" ? "Today" : "Tomorrow"} - ${month} ${day}`;
   };
 
+  const formatVerificationMethod = (verificationType: VerificationType | undefined): string => {
+    if (verificationType === "strava") {
+      return "Strava";
+    }
+    return "Honor System";
+  };
+
+  const formatActivityTypes = (types: string[] | undefined): string => {
+    if (!types || types.length === 0) return "";
+    return types.join(", ");
+  };
+
   // Handle form submission
   const handleSubmit = async () => {
     if (!isFormDataComplete(formData)) {
@@ -81,6 +94,22 @@ export function ConfirmationStep() {
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Verification Method",
+      value: formatVerificationMethod(formData.verificationType),
+      subValue: formData.verificationType === "strava" && formData.stravaActivityTypes
+        ? formatActivityTypes(formData.stravaActivityTypes)
+        : null,
+      icon: formData.verificationType === "strava" ? (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+          <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+        </svg>
+      ) : (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
     },
@@ -141,6 +170,9 @@ export function ConfirmationStep() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-gray-500 dark:text-gray-400">{item.label}</p>
                 <p className="text-lg font-semibold text-foreground truncate">{item.value}</p>
+                {item.subValue && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{item.subValue}</p>
+                )}
               </div>
             </div>
           ))}
