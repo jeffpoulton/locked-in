@@ -1,5 +1,4 @@
-import { NextRequest } from "next/server";
-import { supabaseAdmin } from "./supabaseAdmin";
+import { createClient } from "@/lib/supabase/server";
 import { prisma } from "../db/prisma";
 
 export class AuthError extends Error {
@@ -12,22 +11,26 @@ export class AuthError extends Error {
   }
 }
 
-export async function requireUser(request: NextRequest) {
-  const authHeader = request.headers.get("Authorization");
-
-  if (!authHeader?.startsWith("Bearer ")) {
-    throw new AuthError("Missing or invalid authorization header");
-  }
-
-  const token = authHeader.substring(7);
+/**
+ * Retrieves the authenticated user from the current session.
+ *
+ * This function uses cookie-based session management via @supabase/ssr.
+ * It reads the session from cookies, validates it with Supabase, and
+ * returns the corresponding Prisma user (creating one if it doesn't exist).
+ *
+ * @returns The authenticated Prisma User
+ * @throws AuthError if no valid session exists
+ */
+export async function requireUser() {
+  const supabase = await createClient();
 
   const {
     data: { user: supabaseUser },
     error,
-  } = await supabaseAdmin.auth.getUser(token);
+  } = await supabase.auth.getUser();
 
   if (error || !supabaseUser) {
-    throw new AuthError("Invalid or expired token");
+    throw new AuthError("Not authenticated");
   }
 
   // Get or create user in database
@@ -36,10 +39,14 @@ export async function requireUser(request: NextRequest) {
   });
 
   if (!user) {
+    // Determine email - phone-based auth may not have email
+    const email =
+      supabaseUser.email || supabaseUser.phone || `${supabaseUser.id}@anonymous`;
+
     user = await prisma.user.create({
       data: {
         supabaseUserId: supabaseUser.id,
-        email: supabaseUser.email!,
+        email: email,
         name: supabaseUser.user_metadata?.name || null,
       },
     });

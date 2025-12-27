@@ -1,5 +1,3 @@
-import { supabase } from "./supabase";
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -11,27 +9,32 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Fetch wrapper for API calls.
+ *
+ * Authentication is handled automatically via cookies (set by @supabase/ssr).
+ * Same-origin requests include cookies by default, so no manual Authorization
+ * header is needed.
+ *
+ * @param endpoint - API endpoint path (without /api prefix)
+ * @param options - Standard fetch options
+ * @returns Parsed JSON response
+ * @throws ApiError on non-OK responses
+ */
 export async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     ...options.headers,
   };
 
-  if (session?.access_token) {
-    (headers as Record<string, string>)["Authorization"] =
-      `Bearer ${session.access_token}`;
-  }
-
   const response = await fetch(`/api${endpoint}`, {
     ...options,
     headers,
+    // Ensure cookies are included with same-origin requests (default behavior)
+    credentials: "same-origin",
   });
 
   if (!response.ok) {
