@@ -1,6 +1,16 @@
-import type { Contract, ContractFormData } from "@/schemas/contract";
+import type { Contract, ContractFormData, PaymentStatus } from "@/schemas/contract";
 import { generateContractId, saveContract } from "./contract-storage";
 import { generateRewardSchedule } from "./reward-algorithm";
+
+/**
+ * Options for creating a contract.
+ */
+interface CreateContractOptions {
+  /** Initial payment status (defaults to "pending" for Stripe flow) */
+  paymentStatus?: PaymentStatus;
+  /** Stripe Checkout Session ID for tracking */
+  stripeSessionId?: string;
+}
 
 /**
  * Creates a complete contract from form data.
@@ -13,10 +23,14 @@ import { generateRewardSchedule } from "./reward-algorithm";
  * 5. Returns the created contract for navigation purposes
  *
  * @param formData - The validated form data from the wizard
+ * @param options - Optional settings for payment status
  * @returns The created contract
  * @throws Error if form data is incomplete
  */
-export function createContract(formData: ContractFormData): Contract {
+export function createContract(
+  formData: ContractFormData,
+  options: CreateContractOptions = {}
+): Contract {
   // Validate that all required fields are present
   if (!formData.habitTitle) {
     throw new Error("Habit title is required");
@@ -53,6 +67,9 @@ export function createContract(formData: ContractFormData): Contract {
     // Verification fields (default to honor_system if not set)
     verificationType: formData.verificationType || "honor_system",
     stravaActivityTypes: formData.stravaActivityTypes,
+    // Payment status fields (default to pending for Stripe flow)
+    paymentStatus: options.paymentStatus ?? "pending",
+    stripeSessionId: options.stripeSessionId,
   };
 
   // Save to localStorage

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { loadContract } from "@/lib/contract-storage";
+import { loadCompletedContract } from "@/lib/contract-storage";
 import { useCheckInStore } from "@/stores/check-in-store";
 import { useDevMode, isDevModeTimeTraveling } from "@/hooks/useDevMode";
 import { DashboardHeader, MetricsMatrix } from "@/components/dashboard";
@@ -18,7 +18,6 @@ import {
   checkTodayVerification,
   syncStravaActivities,
 } from "@/lib/strava-verification";
-import type { Contract } from "@/schemas/contract";
 import type { DayStatus } from "@/schemas/check-in";
 
 interface DayInfo {
@@ -38,7 +37,8 @@ interface DayInfo {
  * - Displays progress metrics and timeline
  * - Check-in and reveal actions via modals
  * - Real-time updates from store subscriptions
- * - Redirects to /contract/new if no contract found
+ * - Redirects to /contract/new if no contract found or payment not completed
+ * - Only shows contracts with paymentStatus: "completed"
  * - Strava integration: auto-verification and Force Sync
  */
 export default function DashboardPage() {
@@ -78,9 +78,9 @@ export default function DashboardPage() {
   const currentStreak = useCheckInStore((state) => state.getCurrentStreak());
   const longestStreak = useCheckInStore((state) => state.getLongestStreak());
 
-  // Initialize on mount
+  // Initialize on mount - only load completed contracts
   useEffect(() => {
-    const loadedContract = loadContract();
+    const loadedContract = loadCompletedContract();
 
     if (!loadedContract) {
       router.push("/contract/new");

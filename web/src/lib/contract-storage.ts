@@ -1,4 +1,4 @@
-import type { Contract } from "@/schemas/contract";
+import type { Contract, PaymentStatus } from "@/schemas/contract";
 
 /** The localStorage key for storing the active contract */
 const STORAGE_KEY = "locked-in-contract";
@@ -35,6 +35,52 @@ export function loadContract(): Contract | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Loads a contract only if it has completed payment status.
+ * Used by the dashboard to ensure only paid contracts are displayed.
+ *
+ * @returns The stored contract if paymentStatus is "completed", otherwise null
+ */
+export function loadCompletedContract(): Contract | null {
+  const contract = loadContract();
+  if (!contract) {
+    return null;
+  }
+  // Only return contracts with completed payment status
+  if (contract.paymentStatus !== "completed") {
+    return null;
+  }
+  return contract;
+}
+
+/**
+ * Updates the payment status of the stored contract.
+ *
+ * @param id - The contract ID to verify (must match stored contract)
+ * @param status - The new payment status
+ * @param sessionId - Optional Stripe session ID to store
+ * @returns true if update was successful, false if contract not found or ID mismatch
+ */
+export function updateContractPaymentStatus(
+  id: string,
+  status: PaymentStatus,
+  sessionId?: string
+): boolean {
+  const contract = loadContract();
+  if (!contract || contract.id !== id) {
+    return false;
+  }
+
+  const updatedContract: Contract = {
+    ...contract,
+    paymentStatus: status,
+    stripeSessionId: sessionId ?? contract.stripeSessionId,
+  };
+
+  saveContract(updatedContract);
+  return true;
 }
 
 /**
