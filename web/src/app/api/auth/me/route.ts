@@ -3,9 +3,9 @@ import { requireUser, AuthError } from "@/server/auth/requireUser";
 import { prisma } from "@/server/db/prisma";
 import { updateUserSchema } from "@/schemas/user";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const user = await requireUser(request);
+    const user = await requireUser();
     return NextResponse.json(user);
   } catch (error) {
     if (error instanceof AuthError) {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const user = await requireUser(request);
+    const user = await requireUser();
     const body = await request.json();
 
     const validation = updateUserSchema.safeParse(body);

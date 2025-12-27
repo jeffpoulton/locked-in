@@ -1,102 +1,96 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import {
+  AuthMethodSelector,
+  EmailAuthForm,
+  PhoneAuthForm,
+  OTPVerification,
+} from "@/components/auth";
+import type { AuthMethod } from "@/schemas/auth";
 
-export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+type AuthState =
+  | { step: "input" }
+  | { step: "verify"; identifier: string };
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+function LoginContent() {
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo") || undefined;
+  const errorParam = searchParams.get("error");
+  const errorDescription = searchParams.get("error_description");
 
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+  const [authMethod, setAuthMethod] = useState<AuthMethod>("email");
+  const [authState, setAuthState] = useState<AuthState>({ step: "input" });
 
-      if (error) {
-        setError(error.message);
-        return;
-      }
+  function handleOTPSent(identifier: string) {
+    setAuthState({ step: "verify", identifier });
+  }
 
-      router.push("/profile");
-    } catch {
-      setError("An unexpected error occurred");
-    } finally {
-      setLoading(false);
-    }
+  function handleBack() {
+    setAuthState({ step: "input" });
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
-        <div>
-          <h2 className="text-center text-3xl font-bold text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 text-red-500 p-3 rounded text-sm">
-              {error}
-            </div>
-          )}
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          </div>
+    <>
+      <div>
+        <h2 className="text-center text-3xl font-bold text-gray-900">
+          {authState.step === "input" ? "Sign in to your account" : "Enter your code"}
+        </h2>
+        {authState.step === "input" && (
+          <p className="mt-2 text-center text-sm text-gray-600">
+            No password needed - we&apos;ll send you a code
+          </p>
+        )}
+      </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
-        <p className="text-center text-sm text-gray-600">
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-blue-600 hover:text-blue-500">
-            Sign up
-          </Link>
-        </p>
+      {/* Show error from URL params (e.g., from auth callback) */}
+      {errorParam && authState.step === "input" && (
+        <div className="bg-red-50 text-red-500 p-3 rounded text-sm">
+          {errorDescription || "Authentication failed. Please try again."}
+        </div>
+      )}
+
+      {authState.step === "input" ? (
+        <div className="space-y-6">
+          <AuthMethodSelector
+            selectedMethod={authMethod}
+            onMethodChange={setAuthMethod}
+          />
+
+          {authMethod === "email" ? (
+            <EmailAuthForm onOTPSent={handleOTPSent} redirectTo={returnTo} />
+          ) : (
+            <PhoneAuthForm onOTPSent={handleOTPSent} />
+          )}
+        </div>
+      ) : (
+        <OTPVerification
+          identifier={authState.identifier}
+          method={authMethod}
+          onBack={handleBack}
+          redirectTo={returnTo}
+        />
+      )}
+
+      <p className="text-center text-sm text-gray-600">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="text-blue-600 hover:text-blue-500">
+          Sign up
+        </Link>
+      </p>
+    </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full space-y-6 p-8 bg-white rounded-lg shadow">
+        <Suspense fallback={<div className="text-center">Loading...</div>}>
+          <LoginContent />
+        </Suspense>
       </div>
     </div>
   );

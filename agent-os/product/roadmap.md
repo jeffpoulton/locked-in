@@ -30,13 +30,13 @@ Validate the core habit cycle experience. No real money, no auth, no database—
 
 Make the prototype real. Add the systems needed for actual users with real money.
 
-8. [ ] User Authentication — Implement email/password and OAuth sign-up/sign-in using Supabase Auth, including session management and protected routes for both web and mobile. `M`
+8. [x] User Authentication — Implement email/password and OAuth sign-up/sign-in using Supabase Auth, including session management and protected routes for both web and mobile. `M`
 
 9. [ ] User Profile & Settings — Create user profile storage and settings management including notification preferences, timezone, and display name. `S`
 
 10. [ ] Database Schema & Persistence — Move from localStorage to Supabase/Prisma. Store contracts, daily completions, reward schedules, and user progress. Migrate the prototype's data model to proper persistence. `M`
 
-11. [ ] Stripe Integration — Set up Stripe Connect for deposit collection and withdrawal processing, including webhook handling for payment events and secure key management. `M`
+11. [x] Stripe Integration — Set up Stripe Connect for deposit collection and withdrawal processing, including webhook handling for payment events and secure key management. `M`
 
 12. [ ] Wallet System — Implement in-app wallet for tracking user balances. Recovered rewards accumulate here during cycles. Support deposits from Stripe, withdrawals to bank, and balance checks. This is the central ledger for all user funds. `M`
 
