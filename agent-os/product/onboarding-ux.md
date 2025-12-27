@@ -10,18 +10,18 @@ This document defines the onboarding experience for new users entering Locked In
 
 ### Voice & Tone
 
-- **Empowering, not confrontational.** We don't bash other apps or make users feel bad about past failures.
-- **Calm, confident mentor.** Zen-like presence. Reassuring without being overbearing.
-- **Future self pulling forward.** The better version of you is waiting. This isn't pressure — it's invitation.
-- **Authentic, not corporate.** Personal, warm, focused. Never enterprise-speak.
+- **Direct and confident.** No fluff. Say what it is.
+- **No-bullshit attitude.** We're not another habit app with streaks and badges. We say that plainly.
+- **Stakes are real.** The tone reflects the product — serious commitment, real consequences.
+- **Authentic, not corporate.** Personal, bold, focused. Never enterprise-speak or startup jargon.
 
 ### Aesthetic Direction
 
-- **Premium/minimal.** Clean, focused, intentional. Reference: Linear, The Way (Henry Shuckman).
-- **Zen-like focus.** The user is about to enter one deeply focused cycle. The UI should feel like that.
-- **Not a finance app.** Despite involving money, this should never feel like banking, crypto, or fintech.
-- **Light & dark.** Must work beautifully in both modes. Dark should feel focused, not developer/crypto.
-- **Illustrations present but subtle.** Not a defining characteristic. Typography and space do the heavy lifting.
+- **Premium/minimal.** Clean, focused, intentional. Reference: Linear.
+- **Typography-led.** Let the words hit. No need for abstract orbs or generic wellness imagery.
+- **Not a finance app.** Despite involving money, this should never feel like banking, crypto, or fintech. No "smart contracts" or "wallets."
+- **Light & dark.** Must work beautifully in both modes. Dark should feel bold and focused.
+- **Visuals earn their place.** Only add imagery if it clarifies or amplifies. When in doubt, let the copy do the work.
 
 ### Interaction Philosophy
 
@@ -55,11 +55,11 @@ We assume users know **very little** about the concept. Onboarding is their intr
 ┌─────────────────────────────────────────────────────────────┐
 │  ONBOARDING (5 screens)                                     │
 │  ───────────────────────                                    │
-│  Screen 1: Emotional Hook                                   │
-│  Screen 2: Core Concept                                     │
-│  Screen 3: Psychology #1 (Loss Aversion Quiz)               │
-│  Screen 4: Psychology #2 (Intermittent Reward Quiz)         │
-│  Screen 5: How It Works + Disclaimers                       │
+│  Screen 1: The Hook (what this is)                          │
+│  Screen 2: The Mechanism (how it works)                     │
+│  Screen 3: The Twist (next-day reveal)                      │
+│  Screen 4: The Science (loss aversion quiz)                 │
+│  Screen 5: The Rules (disclaimers)                          │
 ├─────────────────────────────────────────────────────────────┤
 │  ACCOUNT CREATION                                           │
 │  ───────────────────────                                    │
@@ -88,226 +88,210 @@ A discrete "Already have an account? Log in" link appears on Screen 1 and persis
 
 ## Screen-by-Screen Breakdown
 
-### Screen 1: Emotional Hook
+### Screen 1: The Hook
 
-**Purpose:** Capture attention. Create resonance. Set the tone.
+**Purpose:** Immediately differentiate from every other habit app. Set the tone: this is serious.
 
 **Content:**
 
 ```
-[Headline - Option A]
-The accountability coach you've always wanted
-but could never justify paying for.
+[Headline]
+Accountability coaching, for real.
 
-[Headline - Option B]
-The first accountability coach
-that refunds you on your success.
+[Body]
+No streaks. No badges. No bullshit.
 
-[Subtext]
-Real commitment. Real stakes. Real results.
-
-[Visual]
-Subtle, abstract — perhaps a gentle pulse or glow suggesting potential energy.
+Real money. Real consequences.
 
 [CTA]
-Continue →
+Get Locked In →
 
 [Secondary]
 Already have an account? Log in
 ```
 
+**Visual direction:**
+- Dark, minimal. Let the typography hit.
+- Could feature the Locked In wordmark or a subtle lock icon.
+- No abstract orbs, no zen imagery. The words are the visual.
+
 **Notes:**
-- Both headline options introduce the core value prop immediately.
-- Option A speaks to the pain (wanted but couldn't justify) → we solve it.
-- Option B leads with the mechanism (refunds on success) → intriguing and different.
-- Test both. They appeal to slightly different mindsets.
-- Tone: confident, clear, slightly bold.
+- Opens with attitude. This isn't a gentle invitation — it's a statement.
+- "No streaks. No badges. No bullshit." immediately tells them what this ISN'T.
+- "Real money. Real consequences." tells them what it IS.
+- CTA uses the brand name: "Get Locked In" — the action IS the product.
 
 ---
 
-### Screen 2: Core Concept
+### Screen 2: The Mechanism
 
-**Purpose:** Introduce what Locked In is. Plant the "refund" hook.
+**Purpose:** Explain how it works in the simplest terms. The mechanism IS the hook.
 
 **Content:**
 
 ```
 [Headline]
-The only accountability coach that refunds you for your success.
+Put up money.
+Do the work.
+Earn it back.
 
 [Body]
-You put real money on the line.
-Complete your daily action, and earn it back — up to 100%.
+Complete your daily habit and recover up to 100% of your deposit.
 
-This isn't a subscription. It's an investment in yourself.
+Miss a day that had a reward? That money's gone.
+Not to charity. Not refunded. Gone.
 
-[Visual]
-Simple representation of the cycle concept — perhaps a minimal arc or timeline.
+That's what makes this work.
 
 [CTA]
-How does it work? →
+Continue →
 ```
 
+**Visual direction:**
+- Typography-led. The rhythm of "Put. Do. Earn." is the visual.
+- Could use a simple 3-step treatment, but keep it minimal.
+- Let the weight of "Gone." land.
+
 **Notes:**
-- This is the pitch. Keep it tight.
-- "Investment in yourself" reframes the deposit positively.
-- No details on the mechanism yet — just the promise.
+- This is the core mechanism in plain language.
+- The repetition of "Gone." emphasizes the stakes.
+- "That's what makes this work." — confident, not apologetic about the consequences.
 
 ---
 
-### Screen 3: Psychology Principle #1 — Loss Aversion
+### Screen 3: The Twist
 
-**Purpose:** Educate through interaction. Introduce loss aversion.
+**Purpose:** Reveal the next-day mystery — the most unique part of the product. Create intrigue.
 
 **Content:**
 
 ```
-[Question - Quiz Style]
+[Headline]
+Here's the thing:
+
+[Body]
+You won't know which days earn rewards.
+You won't know how much they're worth.
+You'll find out the next day.
+
+Complete today. Discover tomorrow.
+
+[CTA]
+Continue →
+```
+
+**Visual direction:**
+- This screen could support subtle animation — a day flipping, a reward amount blurring then revealing.
+- *Possibly* advent calendar vibe or reveal-type experience.
+- Or keep it pure typography with strong hierarchy.
+- The mystery should feel intriguing, not confusing.
+
+**Notes:**
+- This *must* be the "aha" moment. The twist that makes Locked In different.
+- "Complete today. Discover tomorrow." is the tagline for the reveal mechanic.
+- The uncertainty is a feature, not a bug — and we're owning it.
+
+---
+
+### Screen 4: The Science
+
+**Purpose:** Introduce loss aversion — the psychological principle that makes this work.
+
+**Content:**
+
+```
+[Headline]
 Quick question:
 
-Which is more effective at changing behavior?
+[Quiz]
+Which changes behavior more effectively?
 
 [ ] The chance to earn $10
-[ ] The threat of losing $10
+[ ] The risk of losing $10
 
 [After selection, reveal:]
 
 [If they chose "earn $10":]
-[Headline]
-Actually, it's losing $10.
+Losing hits harder.
 
 [If they chose "losing $10":]
-[Headline]
-Exactly right.
+Exactly.
 
 [Body - same for both:]
-It's called loss aversion — and decades of research show that the fear of losing is 2–2.5x more powerful than the promise of gaining.
+Research shows the fear of loss is 2–2.5x more powerful than the promise of gain.
 
-This is the foundation of Locked In.
-
-You're not chasing rewards. You're protecting what's already yours. And that changes everything.
+That's why your money is already yours in Locked In.
+You're not earning rewards — you're protecting what you've committed.
 
 [CTA]
-Next →
+Continue →
 ```
+
+**Visual direction:**
+- Clean quiz UI with two clear options.
+- Reveal animation when they select.
+- The statistic (2–2.5x) should be visually emphasized.
 
 **Notes:**
 - Interactive moment. User selects an answer.
-- Response adapts based on their choice — validates if correct, gently corrects if not.
-- The 2–2.5x statistic is the anchor. It's specific, credible, and memorable.
-- "This is the foundation of Locked In" — connects principle to product.
-- Link opportunity: "Learn more about the psychology →" (opens modal with deeper content)
+- Response adapts based on their choice — validates or gently corrects.
+- The 2–2.5x statistic is specific, credible, and memorable.
+- Key reframe: "You're not earning rewards — you're protecting what you've committed."
 
 ---
 
-### Screen 4: Psychology Principle #2 — Intermittent Reinforcement
+### Screen 5: The Rules
 
-**Purpose:** Introduce variable rewards. Address the "gambling" psychology ethically.
-
-**Content:**
-
-```
-[Question - Multiple Choice]
-What makes games (and yes, slot machines) so hard to put down?
-
-[ ] Big rewards
-[ ] Frequent rewards
-[ ] Unpredictable rewards
-[ ] Social pressure
-
-[After selection, reveal:]
-
-[If they chose "Unpredictable rewards":]
-[Headline]
-Exactly.
-
-[If they chose anything else:]
-[Headline]
-Close — it's unpredictable rewards.
-
-[Body - same for both:]
-It's called intermittent reinforcement. Your brain is wired to stay engaged when it doesn't know if the next action will pay off.
-
-Locked In uses this same principle — but instead of pulling you toward your phone, it pushes you toward your goals.
-
-Complete your action today.
-Discover your reward tomorrow.
-
-[CTA]
-Almost there →
-```
-
-**Notes:**
-- Four options makes it feel like a real quiz.
-- Response adapts based on their choice — validates if correct, gently corrects if not.
-- "Complete today. Discover tomorrow." is the light-touch reveal education.
-- Acknowledges the gambling parallel honestly, then reframes it.
-- Link opportunity: "Why this works →" (deeper psychology modal)
-
----
-
-### Screen 5: How It Works + Disclaimers
-
-**Purpose:** Concrete mechanics. Set expectations. Cover legal/ethical ground.
+**Purpose:** Set expectations. Cover the important stuff. Get acknowledgment.
 
 **Content:**
 
 ```
 [Headline]
-How a cycle works
+Before you lock in:
 
-[Step-by-step, minimal:]
-
-1. Choose your habit and how long you want to commit (14–30 days)
-2. Deposit an amount you're willing to put on the line ($100–$1,000)
-3. Complete your daily action — we verify it automatically
-4. Each day you complete may have a reward waiting (revealed the next day)
-5. Complete the cycle and recover up to 100% of your deposit
-
-[Divider]
-
-[Headline - Smaller]
-A few things to know
-
-[Interactive acknowledgment cards — user taps/clicks each to "accept":]
+[Interactive acknowledgment cards — user taps each to expand, read, and acknowledge:]
 
 Each card expands on tap, then collapses with a checkmark when acknowledged.
 A subtle progress indicator fills as they complete each one.
 
-□ → ✓  What happens if I miss a day?
-        If that day had a reward, it's forfeited. You don't know which days
-        have rewards until it's too late — that's what keeps you showing up.
+□ → ✓  Miss a day with a reward? It's forfeited instantly.
+        You won't know which days have rewards until the next day.
+        That's the point.
 
-□ → ✓  Where does forfeited money go?
-        To Locked In. Not to charity, not refunded. Real stakes require real
-        consequences. That's what makes this work.
+□ → ✓  Forfeited money goes to Locked In.
+        Not to charity. Not refunded. That's what keeps the stakes real.
 
-□ → ✓  Can I quit early?
-        Within 48 hours: full refund. After that: 50% of remaining rewards,
-        50% forfeited. Life happens, but commitment has weight.
+□ → ✓  Need to quit early? 48 hours = full refund.
+        After that: 50% of remaining rewards back, 50% forfeited.
+        Life happens, but commitment has weight.
 
-□ → ✓  What if I can't verify automatically?
-        We integrate with Strava, Apple Health, and more. For habits we can't
-        verify, photo + AI confirmation is available.
+□ → ✓  We verify automatically.
+        Strava, Apple Health, GitHub, and more.
+        For habits we can't auto-verify, photo + AI confirmation works.
 
-□ → ✓  How much should I deposit?
-        Only what you can afford to lose. This is a commitment device, not a
-        savings account.
+□ → ✓  Only deposit what you're willing to lose.
+        This is a commitment device, not a savings account.
 
 [CTA - disabled until all acknowledged]
-I understand. Let's begin →
+I understand. Let's go →
 
 [CTA - enabled after all acknowledged]
-✓ I understand. Let's begin →
+✓ I understand. Let's go →
 ```
 
+**Visual direction:**
+- Cards should feel substantial but not overwhelming.
+- Checkmarks provide satisfying feedback.
+- Progress indicator fills as they acknowledge each one.
+- Final CTA unlocks only after all items are acknowledged.
+
 **Notes:**
-- Each acknowledgment feels like a micro-commitment, not a legal burden.
-- Progress indicator (or filling bar) creates momentum — like leveling up.
-- Checkmarks provide satisfying feedback. The user is "earning" their readiness.
-- Language is direct but not cold. "That's what makes this work" — confident.
-- The final CTA unlocks only after all items are acknowledged — consent is earned, not assumed.
-- Light gamification without feeling like a video game. More like "preparing for launch."
+- Each acknowledgment is a micro-commitment.
+- Language is direct: "That's the point." / "That's what keeps the stakes real."
+- No crypto language (smart contracts, wallets). No "community verification."
+- The 48-hour refund policy is clearly stated.
+- Consent is earned, not assumed.
 
 ---
 
@@ -901,14 +885,16 @@ Triggered by "Learn more about the psychology" CTAs throughout onboarding.
 
 This onboarding flow is designed to:
 
-1. **Hook** with the future-self invitation
-2. **Educate** through interactive psychology moments
-3. **Set expectations** with clear, honest disclaimers
-4. **Create account** with passwordless auth
-5. **Capture intent** with template selection and verification
-6. **Commit** with deposit and slide-to-lock-in
-7. **Confirm** with a clear "you're in" moment
+1. **Hook** with attitude — this isn't another habit app
+2. **Explain** the mechanism in plain terms — put money up, do the work, get it back
+3. **Reveal** the twist — you won't know which days have rewards until tomorrow
+4. **Teach** the science — loss aversion is why this works
+5. **Set rules** — get acknowledgment on the important stuff
+6. **Create account** with passwordless auth
+7. **Capture intent** with template selection and verification
+8. **Commit** with deposit and slide-to-lock-in
+9. **Confirm** with a clear "you're locked in" moment
 
-The tone is zen mentor — calm, confident, never pushy. The aesthetic is premium-minimal with warmth. The psychology is surfaced through experience, not lecture.
+The tone is direct and no-bullshit. The aesthetic is premium-minimal with typography doing the heavy lifting. The stakes are real, and the copy reflects that.
 
-Users should finish onboarding feeling focused, committed, and ready to become the person they've been meaning to be.
+Users should finish onboarding knowing exactly what they're getting into — and choosing to do it anyway.
