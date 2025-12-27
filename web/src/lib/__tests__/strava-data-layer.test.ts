@@ -117,6 +117,7 @@ describe("Strava Data Layer", () => {
           rewardDayCount: 10,
           rewards: [{ day: 3, amount: 100 }],
         },
+        paymentStatus: "completed" as const,
       };
 
       const result = contractSchema.safeParse(completeContract);

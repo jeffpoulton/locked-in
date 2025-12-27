@@ -53,6 +53,14 @@ export const verificationTypeSchema = z.enum(["strava", "honor_system"]).default
 export const stravaActivityTypesSchema = z.array(z.string()).optional();
 
 /**
+ * Schema for payment status - tracks the Stripe payment state.
+ * "pending" - contract created, awaiting payment
+ * "completed" - payment successful
+ * "failed" - payment declined or cancelled
+ */
+export const paymentStatusSchema = z.enum(["pending", "completed", "failed"]);
+
+/**
  * Combined schema for all wizard form inputs.
  * Used to validate the complete form data before contract creation.
  */
@@ -68,6 +76,7 @@ export const contractFormSchema = z.object({
 /**
  * Schema for the complete contract stored in localStorage.
  * Includes generated fields: id, createdAt, rewardSchedule.
+ * Includes payment fields: paymentStatus, stripeSessionId.
  */
 export const contractSchema = z.object({
   id: z.string().uuid("Contract ID must be a valid UUID"),
@@ -79,6 +88,9 @@ export const contractSchema = z.object({
   rewardSchedule: rewardScheduleSchema,
   verificationType: verificationTypeSchema,
   stravaActivityTypes: stravaActivityTypesSchema,
+  // Payment status fields
+  paymentStatus: paymentStatusSchema,
+  stripeSessionId: z.string().optional(),
 });
 
 // Inferred TypeScript types from schemas
@@ -88,5 +100,6 @@ export type DepositAmount = z.infer<typeof depositAmountSchema>;
 export type StartDate = z.infer<typeof startDateSchema>;
 export type VerificationType = z.infer<typeof verificationTypeSchema>;
 export type StravaActivityTypes = z.infer<typeof stravaActivityTypesSchema>;
+export type PaymentStatus = z.infer<typeof paymentStatusSchema>;
 export type ContractFormData = z.infer<typeof contractFormSchema>;
 export type Contract = z.infer<typeof contractSchema>;
